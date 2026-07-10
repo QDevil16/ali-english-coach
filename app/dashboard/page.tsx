@@ -96,6 +96,24 @@ export default async function DashboardPage() {
   return (
     <AppShell title="Ali English Coach">
       <div className="space-y-6">
+        {/* Gramer temelleri */}
+        <Link
+          href="/foundations"
+          className="block rounded-2xl border border-slate-200 bg-white p-4"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-bold text-slate-900">
+                📐 Gramer Temelleri
+              </div>
+              <div className="text-xs text-slate-500">
+                Kuralları sırayla öğren: am/is/are, zamanlar, cümle yapısı...
+              </div>
+            </div>
+            <span className="text-brand">→</span>
+          </div>
+        </Link>
+
         {/* Bugünkü ders */}
         <Card className="border-brand bg-brand-light">
           <div className="text-xs font-semibold text-brand-dark">
