@@ -107,6 +107,20 @@ export default async function DashboardPage() {
           </div>
         </Card>
 
+        {/* Konuşma pratiği */}
+        <Card>
+          <CardTitle>🎤 Konuşma Pratiği</CardTitle>
+          <CardText>
+            AI ile sesli, kısa İngilizce sohbet. O konuşur, sen cevap verirsin.
+          </CardText>
+          <Link
+            href="/lesson/practice"
+            className="mt-2 inline-block text-sm font-semibold text-brand"
+          >
+            Konuşmaya başla →
+          </Link>
+        </Card>
+
         {/* Özet istatistikler */}
         <div className="grid grid-cols-3 gap-2">
           <StatCard label="Seviye" value={profile.cefr_level ?? "—"} />

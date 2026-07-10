@@ -11,6 +11,17 @@ Kurallar:
 - Nazik, gerçekçi ama motive edici ol. "Kesin başarı" gibi ifade kullanma.
 - ÇIKTIYI SADECE geçerli JSON olarak ver.`;
 
+export function conversationSystem(level: string): string {
+  return `Sen Ali'nin İngilizce konuşma partnerisin. Seviyesi ${level} (düşük).
+Kurallar:
+- ÇOK KISA konuş: 1, en fazla 2 basit cümle.
+- Basit kelimeler kullan (A1/A2). Zor kelime yok.
+- HER cevabında sonuna küçük bir soru ekle ki konuşma devam etsin.
+- Gerekirse parantez içinde kısa Türkçe ipucu ver, ör: "Where do you live? (Nerede yaşıyorsun?)"
+- Ali hata yaparsa nazikçe doğrusunu söyle, sonra devam et.
+- Sadece konuşma partneri gibi yaz; liste, başlık, uzun açıklama yok.`;
+}
+
 export function analyzePlacementPrompt(input: unknown): string {
   return `Kullanıcı verisi:
 ${JSON.stringify(input)}
@@ -34,13 +45,31 @@ export function lessonPrompt(input: unknown): string {
   return `Bağlam (profil, hedef hafta, son hatalar):
 ${JSON.stringify(input)}
 
-Bugünkü tek dersi üret. 30-60 dk. Bölüm tipleri: warmup, listening, pattern, examples, comprehension, production, dialogue, correction, summary.
-listening bölümlerinde "sentence" ve "slowText" ver. comprehension'da multiple_choice sorular ver.
+Bugünkü TEK dersi üret. 30-45 dakikalık, DOLU ve adım adım. Kullanıcı seviyesi düşük, dinleme zayıf.
+ZORUNLU: en az 12 bölüm üret. Şu tipleri kullan (bu sırayla):
+- warmup: bugünün hedefi (content)
+- vocab: 4-6 yeni kelime, her biri {"word":"...","tr":"..."} (words dizisi)
+- listening: EN AZ 3 AYRI listening bölümü, her birinde farklı kısa cümle ("sentence" + "slowText") + 1 multiple_choice anlama sorusu
+- repeat: EN AZ 2 tekrar bölümü, {"sentence":"..."} — kullanıcı dinleyip tekrarlayacak
+- pattern: 1-2 kalıp, "pattern" + "explanationTr" + "examples" (4 örnek)
+- comprehension: 2-3 multiple_choice soru
+- production: 1-2 yazılı cümle kurma (prompt)
+- dialogue: 4-6 satırlık mini diyalog (content, satırlar \\n ile)
+- correction: geçmiş hatalardan 1 hatırlatma (content) — hata yoksa genel ipucu
+- summary: kısa özet (content)
+Cümleler KISA ve basit (A1/A2). Türkçe açıklama kullan. Sadece geçerli JSON döndür.
 JSON şeması:
 {"title":"...","level":"A1","estimatedMinutes":35,"focus":["listening","speaking"],
- "sections":[{"type":"warmup","title":"...","content":"..."},
- {"type":"listening","sentence":"Where do you live?","slowText":"Where ... do ... you ... live?","questions":[{"type":"multiple_choice","question":"Bu ne demek?","options":["...","..."],"answer":"..."}]},
- {"type":"pattern","pattern":"Where do you ...?","explanationTr":"...","examples":["...","..."]}]}`;
+ "sections":[
+  {"type":"warmup","title":"Bugünkü hedef","content":"..."},
+  {"type":"vocab","title":"Kelimeler","words":[{"word":"live","tr":"yaşamak"}]},
+  {"type":"listening","title":"Dinleme 1","sentence":"Where do you live?","slowText":"Where ... do ... you ... live?","questions":[{"type":"multiple_choice","question":"Ne demek?","options":["Nerede yaşıyorsun?","..."],"answer":"Nerede yaşıyorsun?"}]},
+  {"type":"repeat","title":"Tekrarla","sentence":"Where do you live?"},
+  {"type":"pattern","title":"Kalıp","pattern":"Where do you ___?","explanationTr":"...","examples":["...","..."]},
+  {"type":"production","title":"Cümle kur","prompt":"..."},
+  {"type":"dialogue","title":"Mini diyalog","content":"A: ...\\nB: ..."},
+  {"type":"summary","title":"Özet","content":"..."}
+ ]}`;
 }
 
 export function evaluatePrompt(input: unknown): string {

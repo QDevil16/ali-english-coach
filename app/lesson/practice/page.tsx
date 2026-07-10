@@ -1,12 +1,12 @@
 import { AppShell } from "@/components/ui/AppShell";
-import { LivePractice } from "@/components/lesson/LivePractice";
+import { ConversationPractice } from "@/components/lesson/ConversationPractice";
 
 export const dynamic = "force-dynamic";
 
 export default function PracticePage() {
   return (
-    <AppShell title="Canlı Pratik">
-      <LivePractice />
+    <AppShell title="Konuşma Pratiği">
+      <ConversationPractice />
     </AppShell>
   );
 }

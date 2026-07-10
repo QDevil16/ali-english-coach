@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/ui/AppShell";
 import { LessonRunner } from "@/components/lesson/LessonRunner";
+import { NewLessonButton } from "@/components/lesson/NewLessonButton";
 import type { LessonContent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -29,11 +30,14 @@ export default async function LessonPage({
 
   return (
     <AppShell title="Ders">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold text-slate-900">{lesson.title}</h1>
-        <p className="text-sm text-slate-500">
-          {lesson.level} · ~{lesson.estimated_minutes ?? 35} dk
-        </p>
+      <div className="mb-4 flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">{lesson.title}</h1>
+          <p className="text-sm text-slate-500">
+            {lesson.level} · ~{lesson.estimated_minutes ?? 35} dk
+          </p>
+        </div>
+        <NewLessonButton />
       </div>
       <LessonRunner lessonId={lesson.id} content={content} />
     </AppShell>

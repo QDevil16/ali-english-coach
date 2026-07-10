@@ -7,6 +7,11 @@ import { Card, CardTitle, CardText } from "@/components/ui/Card";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Input";
 import { ListenButton } from "@/components/lesson/ListenButton";
+import {
+  speak,
+  recognizeOnce,
+  recognitionSupported,
+} from "@/lib/speech/browserSpeech";
 import { cn } from "@/lib/utils";
 import type { LessonContent, LessonSection } from "@/lib/types";
 
@@ -19,11 +24,35 @@ type AnswerRecord = {
   explanation?: string;
 };
 
-function categoryFor(sectionType: string): string {
-  if (sectionType === "listening") return "listening";
-  if (sectionType === "comprehension") return "not_understanding";
-  if (sectionType === "production") return "grammar";
+function categoryFor(t: string): string {
+  if (t === "listening") return "listening";
+  if (t === "comprehension") return "not_understanding";
   return "grammar";
+}
+
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+}
+function isMatch(said: string, target: string): boolean {
+  const a = normalize(said), b = normalize(target);
+  if (!a) return false;
+  if (a === b) return true;
+  const bw = b.split(" ");
+  const aw = new Set(a.split(" "));
+  return bw.filter((w) => aw.has(w)).length / bw.length >= 0.6;
+}
+
+function sectionComplete(
+  s: Record<string, any>,
+  si: number,
+  answers: Record<string, AnswerRecord>,
+): boolean {
+  const qs = Array.isArray(s.questions) ? s.questions : [];
+  for (let qi = 0; qi < qs.length; qi++)
+    if (answers[`s${si}q${qi}`] === undefined) return false;
+  if (s.type === "production" && s.prompt && answers[`s${si}prod`] === undefined)
+    return false;
+  return true;
 }
 
 export function LessonRunner({
@@ -35,15 +64,20 @@ export function LessonRunner({
 }) {
   const router = useRouter();
   const startRef = useRef(Date.now());
+  const sections = content.sections ?? [];
+  const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerRecord>>({});
   const [finished, setFinished] = useState(false);
-  const [feedback, setFeedback] = useState<string>("");
+  const [feedback, setFeedback] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function record(id: string, rec: AnswerRecord) {
+  const record = (id: string, rec: AnswerRecord) =>
     setAnswers((a) => ({ ...a, [id]: rec }));
-  }
+
+  const s = (sections[step] ?? {}) as Record<string, any>;
+  const canProceed = sectionComplete(s, step, answers);
+  const isLast = step === sections.length - 1;
 
   async function finish() {
     setSaving(true);
@@ -56,15 +90,10 @@ export function LessonRunner({
       router.push("/login");
       return;
     }
-
     const list = Object.values(answers);
     const correct = list.filter((a) => a.correct).length;
     const score = list.length ? Math.round((correct / list.length) * 100) : 100;
-    const minutes = Math.max(
-      1,
-      Math.round((Date.now() - startRef.current) / 60000),
-    );
-
+    const minutes = Math.max(1, Math.round((Date.now() - startRef.current) / 60000));
     const wrong = list.filter((a) => !a.correct);
     if (wrong.length) {
       await supabase.from("mistakes").insert(
@@ -82,25 +111,18 @@ export function LessonRunner({
         })),
       );
     }
-
     try {
       const res = await fetch("/api/ai/finish-lesson", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lessonId,
-          answers,
-          score,
-          timeSpentMinutes: minutes,
-        }),
+        body: JSON.stringify({ lessonId, answers, score, timeSpentMinutes: minutes }),
       });
       const json = await res.json();
       setFeedback(json.feedback || "Ders tamamlandı!");
-      setFinished(true);
     } catch {
-      setError("Kaydedilemedi ama ilerlemen alındı. Panele dönebilirsin.");
-      setFinished(true);
+      setError("Kaydedilemedi ama ilerlemen alındı.");
     } finally {
+      setFinished(true);
       setSaving(false);
     }
   }
@@ -126,20 +148,43 @@ export function LessonRunner({
 
   return (
     <div className="space-y-4">
-      {content.sections?.map((s, si) => (
-        <Section
-          key={si}
-          section={s}
-          si={si}
-          answers={answers}
-          onAnswer={record}
-        />
-      ))}
+      <div>
+        <div className="mb-1 flex justify-between text-xs text-slate-500">
+          <span>Adım {step + 1} / {sections.length}</span>
+          <span>{Math.round(((step + 1) / sections.length) * 100)}%</span>
+        </div>
+        <div className="h-2 w-full rounded-full bg-slate-200">
+          <div
+            className="h-2 rounded-full bg-brand transition-all"
+            style={{ width: `${((step + 1) / sections.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      <Section section={s as unknown as LessonSection} si={step} answers={answers} onAnswer={record} />
 
       {error && <Alert>{error}</Alert>}
-      <Button onClick={finish} disabled={saving} className="w-full">
-        {saving ? "Kaydediliyor..." : "Dersi Bitir"}
-      </Button>
+
+      <div className="flex gap-2">
+        {step > 0 && (
+          <Button
+            variant="ghost"
+            onClick={() => setStep(step - 1)}
+            className="shrink-0"
+          >
+            Geri
+          </Button>
+        )}
+        {isLast ? (
+          <Button onClick={finish} disabled={!canProceed || saving} className="flex-1">
+            {saving ? "Kaydediliyor..." : "Dersi Bitir"}
+          </Button>
+        ) : (
+          <Button onClick={() => setStep(step + 1)} disabled={!canProceed} className="flex-1">
+            {canProceed ? "Sonraki Adım →" : "Önce bu adımı tamamla"}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -160,23 +205,52 @@ function Section({
 
   return (
     <Card>
-      {s.title && <div className="mb-1 text-xs font-semibold text-brand">{String(s.title).toUpperCase()}</div>}
+      {s.title && (
+        <div className="mb-2 text-xs font-semibold text-brand">
+          {String(s.title).toUpperCase()}
+        </div>
+      )}
 
       {s.content && (
-        <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+        <p className="whitespace-pre-line leading-relaxed text-slate-700">
           {s.content}
         </p>
       )}
 
-      {/* Dinleme / cümle */}
-      {s.sentence && (
+      {Array.isArray(s.words) && (
+        <ul className="mt-2 space-y-2">
+          {s.words.map((w: any, i: number) => (
+            <li
+              key={i}
+              className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2"
+            >
+              <span>
+                <span className="font-semibold text-slate-900">{w.word}</span>
+                <span className="ml-2 text-sm text-slate-500">{w.tr}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => speak(w.word, 0.9)}
+                className="text-brand"
+              >
+                🔊
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {s.sentence && s.type !== "repeat" && (
         <div className="mt-2">
           <p className="text-lg font-bold text-slate-900">{s.sentence}</p>
           <ListenButton text={s.sentence} slowText={s.slowText} />
         </div>
       )}
 
-      {/* Kalıp */}
+      {s.type === "repeat" && s.sentence && (
+        <RepeatBox sentence={s.sentence} />
+      )}
+
       {s.pattern && (
         <div className="mt-2">
           <p className="text-lg font-bold text-slate-900">{s.pattern}</p>
@@ -186,7 +260,6 @@ function Section({
         </div>
       )}
 
-      {/* Örnekler */}
       {Array.isArray(s.examples) && (
         <ul className="mt-3 space-y-2">
           {s.examples.map((ex: string, i: number) => (
@@ -198,7 +271,6 @@ function Section({
         </ul>
       )}
 
-      {/* Çoktan seçmeli sorular */}
       {Array.isArray(s.questions) &&
         s.questions.map((q: any, qi: number) => (
           <McQuestion
@@ -211,7 +283,6 @@ function Section({
           />
         ))}
 
-      {/* Üretim (yazılı cevap) */}
       {s.type === "production" && s.prompt && (
         <ProductionBox
           id={`s${si}prod`}
@@ -222,6 +293,53 @@ function Section({
         />
       )}
     </Card>
+  );
+}
+
+function RepeatBox({ sentence }: { sentence: string }) {
+  const [heard, setHeard] = useState<string | null>(null);
+  const [ok, setOk] = useState<boolean | null>(null);
+  const [listening, setListening] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+
+  async function repeat() {
+    setNote(null);
+    if (!recognitionSupported()) {
+      setNote("Mikrofon tanıma bu tarayıcıda yok (Chrome/Edge dene). Yine de dinleyip yüksek sesle tekrarla.");
+      return;
+    }
+    setListening(true);
+    try {
+      const t = await recognizeOnce();
+      setHeard(t);
+      setOk(isMatch(t, sentence));
+    } catch {
+      setNote("Duyulamadı, tekrar dene.");
+    } finally {
+      setListening(false);
+    }
+  }
+
+  return (
+    <div className="mt-2">
+      <p className="text-lg font-bold text-slate-900">{sentence}</p>
+      <ListenButton text={sentence} />
+      <button
+        type="button"
+        onClick={repeat}
+        disabled={listening}
+        className="mt-2 w-full rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-brand disabled:opacity-60"
+      >
+        {listening ? "🎙️ Dinliyorum..." : "🎤 Sen tekrarla"}
+      </button>
+      {heard && <p className="mt-2 text-sm text-slate-500">Duydum: “{heard}”</p>}
+      {ok !== null && (
+        <p className={cn("mt-1 text-sm font-semibold", ok ? "text-green-600" : "text-amber-600")}>
+          {ok ? "Çok iyi telaffuz! 👏" : "Yaklaştın, bir kez daha dene."}
+        </p>
+      )}
+      {note && <p className="mt-2 text-sm text-amber-600">{note}</p>}
+    </div>
   );
 }
 
@@ -240,7 +358,6 @@ function McQuestion({
 }) {
   const options: string[] = question.options ?? [];
   const correctAnswer: string = question.answer ?? "";
-
   function pick(opt: string) {
     if (answered) return;
     onAnswer(id, {
@@ -251,12 +368,9 @@ function McQuestion({
       category,
     });
   }
-
   return (
     <div className="mt-4">
-      <p className="mb-2 text-sm font-medium text-slate-800">
-        {question.question}
-      </p>
+      <p className="mb-2 text-sm font-medium text-slate-800">{question.question}</p>
       <div className="space-y-2">
         {options.map((opt) => {
           const chosen = answered?.userAnswer === opt;
@@ -281,15 +395,8 @@ function McQuestion({
         })}
       </div>
       {answered && (
-        <p
-          className={cn(
-            "mt-2 text-sm",
-            answered.correct ? "text-green-600" : "text-red-600",
-          )}
-        >
-          {answered.correct
-            ? "Doğru! 👏"
-            : `Doğrusu: ${correctAnswer}`}
+        <p className={cn("mt-2 text-sm", answered.correct ? "text-green-600" : "text-red-600")}>
+          {answered.correct ? "Doğru! 👏" : `Doğrusu: ${correctAnswer}`}
         </p>
       )}
     </div>
@@ -311,8 +418,8 @@ function ProductionBox({
 }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [fb, setFb] = useState<string>("");
-  const [correctAns, setCorrectAns] = useState<string>("");
+  const [fb, setFb] = useState("");
+  const [correctAns, setCorrectAns] = useState("");
 
   async function check() {
     if (!value.trim()) return;
@@ -337,6 +444,13 @@ function ProductionBox({
       });
     } catch {
       setFb("Kontrol edilemedi, yine de devam edebilirsin.");
+      onAnswer(id, {
+        correct: true,
+        question: prompt,
+        userAnswer: value,
+        correctAnswer: "",
+        category,
+      });
     } finally {
       setLoading(false);
     }
@@ -353,20 +467,13 @@ function ProductionBox({
         placeholder="Cevabını yaz..."
       />
       {!answered && (
-        <Button
-          onClick={check}
-          disabled={loading}
-          variant="secondary"
-          className="mt-2 w-full"
-        >
+        <Button onClick={check} disabled={loading} variant="secondary" className="mt-2 w-full">
           {loading ? "Kontrol ediliyor..." : "Kontrol Et"}
         </Button>
       )}
       {fb && <p className="mt-2 text-sm text-slate-700">{fb}</p>}
       {correctAns && (
-        <p className="mt-1 text-sm font-semibold text-green-700">
-          ✓ Doğrusu: {correctAns}
-        </p>
+        <p className="mt-1 text-sm font-semibold text-green-700">✓ Doğrusu: {correctAns}</p>
       )}
     </div>
   );

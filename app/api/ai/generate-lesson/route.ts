@@ -5,25 +5,37 @@ import { TEACHER_SYSTEM, lessonPrompt } from "@/lib/ai/prompts";
 import { mockLesson } from "@/lib/ai/mock";
 import type { LessonContent } from "@/lib/types";
 
-export async function POST() {
+export async function POST(req: Request) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
+  const body = await req.json().catch(() => ({}));
+  const force = !!body?.force;
   const today = new Date().toISOString().slice(0, 10);
 
-  // Bugüne ait ders zaten varsa onu döndür (yeniden üretme).
-  const { data: existing } = await supabase
-    .from("lessons")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("lesson_date", today)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (existing) return NextResponse.json({ lesson: existing, mode: "cache" });
+  if (force) {
+    // Yenile: bugünün derslerini sil, yenisini üret.
+    await supabase
+      .from("lessons")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("lesson_date", today)
+      .neq("status", "done");
+  } else {
+    // Bugüne ait ders zaten varsa onu döndür (yeniden üretme).
+    const { data: existing } = await supabase
+      .from("lessons")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("lesson_date", today)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (existing) return NextResponse.json({ lesson: existing, mode: "cache" });
+  }
 
   const { data: profile } = await supabase
     .from("learner_profiles")
