@@ -53,13 +53,33 @@ export async function POST(req: Request) {
     .select("category, correct_answer, explanation_tr")
     .eq("user_id", user.id)
     .order("last_seen_at", { ascending: false })
-    .limit(5);
+    .limit(8);
+
+  // Önceki dersler: tekrar etmesin, üstüne koysun (ilerleyen kurs).
+  const { data: past } = await supabase
+    .from("lessons")
+    .select("title, lesson_date")
+    .eq("user_id", user.id)
+    .order("lesson_date", { ascending: false })
+    .limit(8);
+
+  const { count: doneCount } = await supabase
+    .from("lessons")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("status", "done");
 
   const level = profile?.cefr_level || "A1";
 
   const { data: content, mode } = await generateJSON<LessonContent>({
     system: TEACHER_SYSTEM,
-    user: lessonPrompt({ profile, curriculum: curriculum?.plan, mistakes }),
+    user: lessonPrompt({
+      profile,
+      curriculum: curriculum?.plan,
+      mistakes,
+      previousLessons: (past ?? []).map((p) => p.title),
+      lessonNumber: (doneCount ?? 0) + 1,
+    }),
     mock: () => mockLesson(level),
   });
 

@@ -189,6 +189,29 @@ export default function SettingsPage() {
         </Card>
 
         <Card>
+          <CardTitle>Öğrenme bilgilerim</CardTitle>
+          <CardText>
+            Hedefin, neden öğrenmek istediğin, neden zorlandığın, öğrenme tarzın
+            ve günlük süren. Değiştirirsen dersler ve müfredat buna göre
+            yeniden şekillenir.
+          </CardText>
+          <div className="mt-3 space-y-2">
+            <a
+              href="/onboarding"
+              className="block rounded-xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white"
+            >
+              Bilgilerimi Düzenle
+            </a>
+            <a
+              href="/curriculum"
+              className="block rounded-xl border border-brand px-4 py-3 text-center text-sm font-semibold text-brand"
+            >
+              Müfredatı Görüntüle / Yenile
+            </a>
+          </div>
+        </Card>
+
+        <Card>
           <CardTitle>Ders dili</CardTitle>
           <CardText>
             Açıklamalar Türkçe, alıştırmalar İngilizce. Bu sürümde sabittir.

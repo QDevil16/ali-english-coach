@@ -46,7 +46,12 @@ export function lessonPrompt(input: unknown): string {
 ${JSON.stringify(input)}
 
 Sen sabırlı bir özel öğretmensin. Kullanıcı Türk, seviyesi düşük, dinleme zayıf, gramerden sıkılıyor.
+Bu, ilerleyen bir kursun DERS NUMARASI bağlamdaki "lessonNumber" olan dersidir.
 Bugünkü TEK dersi üret: TEST DEĞİL, GERÇEK BİR DERS. Önce ÖĞRET, sonra pratik yaptır.
+
+SÜREKLİLİK: "previousLessons" listesindeki konuları TEKRAR ETME; onların üstüne koy, bir adım ilerlet.
+Kısa bir "önceki dersten hatırlatma" ile başla. "mistakes" listesindeki hataları bu derse yedir (tekrar ettir).
+Müfredattaki ("curriculum") sıraya uygun ilerle. Her ders bir öncekinden biraz daha ileri olsun (nakış nakış).
 
 PEDAGOJİ KURALLARI:
 - Konunun MANTIĞINI Türkçe anlat. "Neden böyle?" sorusunu yanıtla.

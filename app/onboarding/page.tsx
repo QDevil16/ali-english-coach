@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Container } from "@/components/ui/Container";
@@ -24,6 +24,30 @@ export default function OnboardingPage() {
   const [priorities, setPriorities] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("learner_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!data) return;
+      if (data.goal) setGoal(data.goal);
+      if (data.motivation) setMotivation(data.motivation);
+      if (data.struggle_description) setStruggle(data.struggle_description);
+      if (Array.isArray(data.learning_style)) setStyles(data.learning_style);
+      if (data.daily_minutes) setMinutes(data.daily_minutes);
+      if (Array.isArray(data.priority_skills)) setPriorities(data.priority_skills);
+      if (data.cefr_level) setIsEdit(true); // seviye zaten var → düzenleme modu
+    })();
+  }, []);
 
   function toggle(list: string[], v: string): string[] {
     return list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
@@ -74,15 +98,20 @@ export default function OnboardingPage() {
       setError("Kaydedilemedi: " + error.message);
       return;
     }
-    router.push("/placement-test");
+    // Düzenleme modunda seviye testine gönderme; plana dön.
+    router.push(isEdit ? "/curriculum?updated=1" : "/placement-test");
   }
 
   return (
     <main className="py-8">
       <Container>
-        <h1 className="mb-1 text-2xl font-bold text-slate-900">Seni tanıyalım</h1>
+        <h1 className="mb-1 text-2xl font-bold text-slate-900">
+          {isEdit ? "Öğrenme bilgilerim" : "Seni tanıyalım"}
+        </h1>
         <p className="mb-6 text-sm text-slate-600">
-          Bu bilgiler sana özel ders planı kurmamız için. Kısa tut, dürüst ol.
+          {isEdit
+            ? "Bilgilerini güncelle. Kaydedince müfredatını ve dersleri buna göre yeniden oluşturabilirsin."
+            : "Bu bilgiler sana özel ders planı kurmamız için. Kısa tut, dürüst ol."}
         </p>
         <form onSubmit={onSubmit} className="space-y-6">
           {error && <Alert>{error}</Alert>}
@@ -143,7 +172,11 @@ export default function OnboardingPage() {
           />
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Kaydediliyor..." : "Devam Et → Seviye Testi"}
+            {loading
+              ? "Kaydediliyor..."
+              : isEdit
+                ? "Kaydet → Müfredat"
+                : "Devam Et → Seviye Testi"}
           </Button>
         </form>
       </Container>

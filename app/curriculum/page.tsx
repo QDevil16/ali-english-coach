@@ -23,6 +23,17 @@ export default async function CurriculumPage() {
 
   return (
     <AppShell title="Müfredat">
+      <div className="mb-4 rounded-xl bg-slate-100 px-4 py-3 text-sm">
+        <span className="text-slate-600">
+          Hedefin veya öğrenme tarzın değiştiyse{" "}
+        </span>
+        <a href="/onboarding" className="font-semibold text-brand">
+          bilgilerini güncelle
+        </a>
+        <span className="text-slate-600">
+          , sonra planı yeniden oluştur — sistem yeni bilgilere göre kurar.
+        </span>
+      </div>
       {!plan ? (
         <Card>
           <CardTitle>Kişisel müfredat</CardTitle>
