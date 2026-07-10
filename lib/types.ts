@@ -42,3 +42,50 @@ export interface PlacementResult {
   strengths: string[];
   recommendedStart: string;
 }
+
+export interface CurriculumWeek {
+  week: number;
+  goal: string;
+  mainTopic: string;
+  listeningGoal: string;
+  speakingGoal: string;
+  patterns: string[];
+  reviewMistakes: string[];
+  lessons: string[];
+}
+
+export interface CurriculumPlan {
+  title: string;
+  level: string;
+  durationWeeks: number;
+  weeks: CurriculumWeek[];
+}
+
+export interface LessonSection {
+  type: string;
+  title?: string;
+  [key: string]: unknown;
+}
+
+export interface LessonContent {
+  title: string;
+  level: string;
+  estimatedMinutes: number;
+  focus: string[];
+  sections: LessonSection[];
+}
+
+export interface EvaluationResult {
+  correct: boolean;
+  score: number;
+  feedbackTr: string;
+  correctAnswer?: string;
+  mistakeCategory?: string;
+}
+
+export interface PlacementAnalysis {
+  aiSummary: string;
+  weakPoints: string[];
+  strengths: string[];
+  recommendation: string;
+}
