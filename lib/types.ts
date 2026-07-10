@@ -22,6 +22,7 @@ export type PlacementCategory =
   | "grammar"
   | "reading"
   | "listening"
+  | "speaking"
   | "sentence";
 
 export interface PlacementQuestion {
@@ -31,6 +32,9 @@ export interface PlacementQuestion {
   helpTr?: string;
   options: string[];
   answerIndex: number;
+  audio?: boolean; // true ise cümle sesli okunur, metni gizlenir
+  sentence?: string; // audio/speak için hedef cümle
+  speak?: boolean; // true ise mikrofonla söyleme sorusu
 }
 
 export interface PlacementResult {

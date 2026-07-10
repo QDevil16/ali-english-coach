@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Input";
 import { Card, CardTitle, CardText } from "@/components/ui/Card";
 import { SingleChoice } from "@/components/ui/Choice";
+import { ListenButton } from "@/components/lesson/ListenButton";
+import { SpeakQuestion } from "@/components/placement/SpeakQuestion";
 import { PLACEMENT_QUESTIONS } from "@/lib/placement/questions";
 import { computeResult } from "@/lib/placement/score";
 import type { CEFR } from "@/lib/types";
@@ -75,7 +77,7 @@ export default function PlacementTestPage() {
     const levels = {
       cefr_level: chosenLevel,
       listening_level: result.skills.listening ?? chosenLevel,
-      speaking_level: chosenLevel,
+      speaking_level: result.skills.speaking ?? chosenLevel,
       grammar_level: result.skills.grammar ?? chosenLevel,
       vocabulary_level: result.skills.vocabulary ?? chosenLevel,
       reading_level: result.skills.reading ?? chosenLevel,
@@ -181,23 +183,52 @@ export default function PlacementTestPage() {
           {q.helpTr && (
             <p className="mt-1 text-sm text-slate-500">{q.helpTr}</p>
           )}
+
+          {q.audio && q.sentence && (
+            <div className="mt-3">
+              <ListenButton text={q.sentence} slowText={q.sentence} />
+            </div>
+          )}
         </Card>
 
-        <SingleChoice
-          label=""
-          options={q.options.map((o, idx) => ({ value: idx, label: o }))}
-          value={answers[q.id] ?? null}
-          onChange={pick}
-          columns={1}
-        />
+        {q.speak && q.sentence ? (
+          <SpeakQuestion
+            sentence={q.sentence}
+            answered={answers[q.id] !== undefined}
+            onResult={(correct) =>
+              setAnswers((a) => ({ ...a, [q.id]: correct ? 1 : 0 }))
+            }
+          />
+        ) : (
+          <SingleChoice
+            label=""
+            options={q.options.map((o, idx) => ({ value: idx, label: o }))}
+            value={answers[q.id] ?? null}
+            onChange={pick}
+            columns={1}
+          />
+        )}
 
         <Button
           onClick={next}
           disabled={answers[q.id] === undefined}
           className="mt-6 w-full"
         >
-          {i + 1 < total ? "Sonraki" : "Testi Bitir"}
+          {q.speak && answers[q.id] === undefined
+            ? "Önce konuş (veya geç)"
+            : i + 1 < total
+              ? "Sonraki"
+              : "Testi Bitir"}
         </Button>
+        {q.speak && (
+          <button
+            type="button"
+            onClick={() => setAnswers((a) => ({ ...a, [q.id]: 0 }))}
+            className="mt-2 w-full py-2 text-sm text-slate-400"
+          >
+            Bu soruyu geç
+          </button>
+        )}
       </Container>
     </main>
   );

@@ -12,6 +12,7 @@ const CATEGORY_TR: Record<string, string> = {
   grammar: "Gramer",
   reading: "Okuma",
   listening: "Dinleme",
+  speaking: "Konuşma",
   sentence: "Cümle kurma",
 };
 

@@ -162,7 +162,11 @@ function Section({
     <Card>
       {s.title && <div className="mb-1 text-xs font-semibold text-brand">{String(s.title).toUpperCase()}</div>}
 
-      {s.content && <CardText>{s.content}</CardText>}
+      {s.content && (
+        <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+          {s.content}
+        </p>
+      )}
 
       {/* Dinleme / cümle */}
       {s.sentence && (
@@ -308,6 +312,7 @@ function ProductionBox({
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [fb, setFb] = useState<string>("");
+  const [correctAns, setCorrectAns] = useState<string>("");
 
   async function check() {
     if (!value.trim()) return;
@@ -321,6 +326,7 @@ function ProductionBox({
       const json = await res.json();
       const ev = json.evaluation ?? {};
       setFb(ev.feedbackTr ?? "");
+      if (!ev.correct && ev.correctAnswer) setCorrectAns(ev.correctAnswer);
       onAnswer(id, {
         correct: !!ev.correct,
         question: prompt,
@@ -357,6 +363,11 @@ function ProductionBox({
         </Button>
       )}
       {fb && <p className="mt-2 text-sm text-slate-700">{fb}</p>}
+      {correctAns && (
+        <p className="mt-1 text-sm font-semibold text-green-700">
+          ✓ Doğrusu: {correctAns}
+        </p>
+      )}
     </div>
   );
 }
