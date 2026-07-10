@@ -30,6 +30,22 @@ export default function SettingsPage() {
   } | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [aiTest, setAiTest] = useState<string | null>(null);
+
+  async function testAi() {
+    setAiTest("Test ediliyor...");
+    try {
+      const res = await fetch("/api/ai/test", { method: "POST" });
+      const j = await res.json();
+      setAiTest(
+        j.ok
+          ? `✅ Çalışıyor · ${j.model}`
+          : `❌ Hata: ${j.reason || "bilinmeyen"}${j.model ? ` (model: ${j.model})` : ""}`,
+      );
+    } catch {
+      setAiTest("❌ İstek başarısız.");
+    }
+  }
 
   useEffect(() => {
     setRate(Number(localStorage.getItem("aec.speechRate")) || 1);
@@ -216,6 +232,16 @@ export default function SettingsPage() {
             </div>
           ) : (
             <CardText>Kontrol ediliyor...</CardText>
+          )}
+          <Button
+            variant="secondary"
+            onClick={testAi}
+            className="mt-3 w-full"
+          >
+            AI'yı Gerçek İstekle Test Et
+          </Button>
+          {aiTest && (
+            <p className="mt-2 text-sm font-medium text-slate-700">{aiTest}</p>
           )}
         </Card>
 
