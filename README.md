@@ -19,7 +19,7 @@ npm run dev   # http://localhost:3010
 ## Durum
 
 - [x] Aşama 1 — Proje iskeleti
-- [ ] Aşama 2 — Supabase & Auth
+- [x] Aşama 2 — Supabase & Auth
 - [ ] Aşama 3 — Onboarding & seviye testi
 - [ ] Aşama 4 — AI altyapısı
 - [ ] Aşama 5 — Dashboard & müfredat
