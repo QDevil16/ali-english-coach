@@ -1,0 +1,22 @@
+name: Deploy to VPS
+
+# main'e her push'ta VPS'e SSH ile bağlanıp deploy.sh çalıştırır.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH ile deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd /var/www/ali-english-coach
+            bash deployment/deploy.sh main
