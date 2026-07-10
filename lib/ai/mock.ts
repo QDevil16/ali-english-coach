@@ -61,6 +61,12 @@ export function mockLesson(level: string): LessonContent {
           "Bugün 'Where do you ...?' kalıbıyla basit 'nerede' sorularını anlamayı, tekrar etmeyi ve kurmayı çalışacağız. Acele yok — her cümleyi birkaç kez dinle.",
       },
       {
+        type: "teach",
+        title: "Mantığı öğren",
+        content:
+          "Türkçede 'Nerede yaşıyorsun?' dersin. İngilizcede soru kurarken bir yardımcı fiil eklenir: 'do'. Yani kelime kelime değil, kalıpla düşün:\n\nWhere (nerede) + do (yardımcı fiil) + you (sen) + live (yaşamak)?\n= Where do you live?\n\n'do' kelimesinin Türkçe karşılığı yoktur; sadece 'bu bir soru' demenin İngilizce yoludur. Onu atlarsan cümle bozulur.",
+      },
+      {
         type: "vocab",
         title: "Yeni kelimeler",
         words: [
@@ -70,6 +76,12 @@ export function mockLesson(level: string): LessonContent {
           { word: "city", tr: "şehir" },
           { word: "every day", tr: "her gün" },
         ],
+      },
+      {
+        type: "teach",
+        title: "Dikkat: sık yapılan hata",
+        content:
+          "'Where you live?' DEME — 'do' eksik, yanlış. Doğrusu: 'Where DO you live?'\n\nKural: Where/What/How gibi soru kelimesinden sonra 'do' veya 'does' gelir. 'he/she/it' için 'does', diğerleri için 'do'.",
       },
       {
         type: "listening",

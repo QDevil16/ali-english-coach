@@ -12,6 +12,7 @@ import {
   recognizeOnce,
   recognitionSupported,
 } from "@/lib/speech/browserSpeech";
+import { scoreSpeech, speechFeedback } from "@/lib/speech/score";
 import { cn } from "@/lib/utils";
 import type { LessonContent, LessonSection } from "@/lib/types";
 
@@ -28,18 +29,6 @@ function categoryFor(t: string): string {
   if (t === "listening") return "listening";
   if (t === "comprehension") return "not_understanding";
   return "grammar";
-}
-
-function normalize(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
-}
-function isMatch(said: string, target: string): boolean {
-  const a = normalize(said), b = normalize(target);
-  if (!a) return false;
-  if (a === b) return true;
-  const bw = b.split(" ");
-  const aw = new Set(a.split(" "));
-  return bw.filter((w) => aw.has(w)).length / bw.length >= 0.6;
 }
 
 function sectionComplete(
@@ -211,11 +200,19 @@ function Section({
         </div>
       )}
 
-      {s.content && (
-        <p className="whitespace-pre-line leading-relaxed text-slate-700">
-          {s.content}
-        </p>
-      )}
+      {s.content &&
+        (s.type === "teach" || s.type === "correction" ? (
+          <div className="rounded-xl bg-brand-light px-4 py-3">
+            <p className="whitespace-pre-line leading-relaxed text-slate-800">
+              {s.type === "teach" ? "💡 " : "⚠️ "}
+              {s.content}
+            </p>
+          </div>
+        ) : (
+          <p className="whitespace-pre-line leading-relaxed text-slate-700">
+            {s.content}
+          </p>
+        ))}
 
       {Array.isArray(s.words) && (
         <ul className="mt-2 space-y-2">
@@ -298,7 +295,7 @@ function Section({
 
 function RepeatBox({ sentence }: { sentence: string }) {
   const [heard, setHeard] = useState<string | null>(null);
-  const [ok, setOk] = useState<boolean | null>(null);
+  const [fb, setFb] = useState<{ ok: boolean; message: string } | null>(null);
   const [listening, setListening] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
@@ -312,7 +309,7 @@ function RepeatBox({ sentence }: { sentence: string }) {
     try {
       const t = await recognizeOnce();
       setHeard(t);
-      setOk(isMatch(t, sentence));
+      setFb(speechFeedback(scoreSpeech(t, sentence)));
     } catch {
       setNote("Duyulamadı, tekrar dene.");
     } finally {
@@ -332,10 +329,15 @@ function RepeatBox({ sentence }: { sentence: string }) {
       >
         {listening ? "🎙️ Dinliyorum..." : "🎤 Sen tekrarla"}
       </button>
-      {heard && <p className="mt-2 text-sm text-slate-500">Duydum: “{heard}”</p>}
-      {ok !== null && (
-        <p className={cn("mt-1 text-sm font-semibold", ok ? "text-green-600" : "text-amber-600")}>
-          {ok ? "Çok iyi telaffuz! 👏" : "Yaklaştın, bir kez daha dene."}
+      {heard && (
+        <div className="mt-2 text-sm">
+          <p className="text-slate-500">Sen dedin: “{heard}”</p>
+          <p className="text-slate-500">Hedef: “{sentence}”</p>
+        </div>
+      )}
+      {fb && (
+        <p className={cn("mt-1 text-sm font-semibold", fb.ok ? "text-green-600" : "text-amber-600")}>
+          {fb.message}
         </p>
       )}
       {note && <p className="mt-2 text-sm text-amber-600">{note}</p>}

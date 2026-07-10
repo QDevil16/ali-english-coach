@@ -45,28 +45,42 @@ export function lessonPrompt(input: unknown): string {
   return `Bağlam (profil, hedef hafta, son hatalar):
 ${JSON.stringify(input)}
 
-Bugünkü TEK dersi üret. 30-45 dakikalık, DOLU ve adım adım. Kullanıcı seviyesi düşük, dinleme zayıf.
-ZORUNLU: en az 12 bölüm üret. Şu tipleri kullan (bu sırayla):
-- warmup: bugünün hedefi (content)
-- vocab: 4-6 yeni kelime, her biri {"word":"...","tr":"..."} (words dizisi)
-- listening: EN AZ 3 AYRI listening bölümü, her birinde farklı kısa cümle ("sentence" + "slowText") + 1 multiple_choice anlama sorusu
-- repeat: EN AZ 2 tekrar bölümü, {"sentence":"..."} — kullanıcı dinleyip tekrarlayacak
-- pattern: 1-2 kalıp, "pattern" + "explanationTr" + "examples" (4 örnek)
-- comprehension: 2-3 multiple_choice soru
-- production: 1-2 yazılı cümle kurma (prompt)
-- dialogue: 4-6 satırlık mini diyalog (content, satırlar \\n ile)
-- correction: geçmiş hatalardan 1 hatırlatma (content) — hata yoksa genel ipucu
-- summary: kısa özet (content)
-Cümleler KISA ve basit (A1/A2). Türkçe açıklama kullan. Sadece geçerli JSON döndür.
+Sen sabırlı bir özel öğretmensin. Kullanıcı Türk, seviyesi düşük, dinleme zayıf, gramerden sıkılıyor.
+Bugünkü TEK dersi üret: TEST DEĞİL, GERÇEK BİR DERS. Önce ÖĞRET, sonra pratik yaptır.
+
+PEDAGOJİ KURALLARI:
+- Konunun MANTIĞINI Türkçe anlat. "Neden böyle?" sorusunu yanıtla.
+- Türkçe ile KARŞILAŞTIR (ör: "Türkçede 'nerede yaşıyorsun', İngilizcede yardımcı fiil 'do' eklenir: Where DO you live?").
+- Sık yapılan HATAYI önceden söyle ve neden yanlış olduğunu açıkla.
+- Önce göster (model), sonra birlikte (ipuçlu), sonra tek başına (serbest). Kademeli zorluk.
+- Kısa cümleler, basit kelimeler (A1/A2). Bunaltma.
+
+ZORUNLU YAPI — en az 14 bölüm, bu sırayla:
+1. warmup: bugün ne öğreneceğiz + neden işine yarar (content)
+2. teach: konunun mantığını Türkçe anlat, Türkçe ile karşılaştır, kuralı adım adım ver (content, uzun ve net)
+3. vocab: 4-6 kelime {"word","tr"}
+4. teach: sık yapılan hatayı açıkla — "şöyle deme, böyle de, çünkü..." (content)
+5. listening (x3, ayrı bölümler): "sentence" + "slowText" + 1 multiple_choice
+6. repeat (x2): {"sentence"} dinle-tekrarla
+7. pattern: "pattern" + "explanationTr" + "examples" (4)
+8. comprehension: 2 multiple_choice
+9. production (x2): kademeli — ilki ipuçlu ("prompt" içinde ipucu ver), ikincisi serbest
+10. dialogue: 5-6 satır (content, \\n ile)
+11. correction: geçmiş hatalardan hatırlatma (content)
+12. summary: bugün ne öğrendik + yarın ne olacak (content)
+
+Türkçe açıkla, İngilizce örnek ver. SADECE geçerli JSON döndür.
 JSON şeması:
-{"title":"...","level":"A1","estimatedMinutes":35,"focus":["listening","speaking"],
+{"title":"...","level":"A1","estimatedMinutes":40,"focus":["listening","speaking","grammar"],
  "sections":[
   {"type":"warmup","title":"Bugünkü hedef","content":"..."},
+  {"type":"teach","title":"Mantığı öğren","content":"Türkçe uzun açıklama, kural, karşılaştırma..."},
   {"type":"vocab","title":"Kelimeler","words":[{"word":"live","tr":"yaşamak"}]},
+  {"type":"teach","title":"Dikkat: sık hata","content":"'Where you live?' DEME. 'Where DO you live?' de. Çünkü..."},
   {"type":"listening","title":"Dinleme 1","sentence":"Where do you live?","slowText":"Where ... do ... you ... live?","questions":[{"type":"multiple_choice","question":"Ne demek?","options":["Nerede yaşıyorsun?","..."],"answer":"Nerede yaşıyorsun?"}]},
   {"type":"repeat","title":"Tekrarla","sentence":"Where do you live?"},
   {"type":"pattern","title":"Kalıp","pattern":"Where do you ___?","explanationTr":"...","examples":["...","..."]},
-  {"type":"production","title":"Cümle kur","prompt":"..."},
+  {"type":"production","title":"Birlikte kur","prompt":"İpucu: 'work' fiiliyle sor. (Where do you ...?)"},
   {"type":"dialogue","title":"Mini diyalog","content":"A: ...\\nB: ..."},
   {"type":"summary","title":"Özet","content":"..."}
  ]}`;

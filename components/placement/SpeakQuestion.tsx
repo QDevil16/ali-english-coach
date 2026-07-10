@@ -6,25 +6,7 @@ import {
   recognitionSupported,
   speak,
 } from "@/lib/speech/browserSpeech";
-
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function isMatch(said: string, target: string): boolean {
-  const a = normalize(said);
-  const b = normalize(target);
-  if (!a) return false;
-  if (a === b) return true;
-  const bw = b.split(" ");
-  const aw = new Set(a.split(" "));
-  const hit = bw.filter((w) => aw.has(w)).length;
-  return hit / bw.length >= 0.6;
-}
+import { scoreSpeech } from "@/lib/speech/score";
 
 export function SpeakQuestion({
   sentence,
@@ -52,7 +34,7 @@ export function SpeakQuestion({
     try {
       const t = await recognizeOnce();
       setHeard(t);
-      const correct = isMatch(t, sentence);
+      const correct = scoreSpeech(t, sentence).ratio >= 0.8;
       setOk(correct);
       onResult(correct);
     } catch {
