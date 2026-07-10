@@ -51,6 +51,32 @@ export async function POST(req: Request) {
     .eq("id", lessonId)
     .eq("user_id", user.id);
 
+  // Günlük ilerleme metriğini güncelle (aynı gün ise topla).
+  const day = new Date().toISOString().slice(0, 10);
+  const { data: pm } = await supabase
+    .from("progress_metrics")
+    .select("id, total_minutes, completed_lessons")
+    .eq("user_id", user.id)
+    .eq("date", day)
+    .maybeSingle();
+
+  if (pm) {
+    await supabase
+      .from("progress_metrics")
+      .update({
+        total_minutes: (pm.total_minutes ?? 0) + timeSpentMinutes,
+        completed_lessons: (pm.completed_lessons ?? 0) + 1,
+      })
+      .eq("id", pm.id);
+  } else {
+    await supabase.from("progress_metrics").insert({
+      user_id: user.id,
+      date: day,
+      total_minutes: timeSpentMinutes,
+      completed_lessons: 1,
+    });
+  }
+
   return NextResponse.json({
     feedback: summary.feedbackTr,
     attemptId: attempt.id,
