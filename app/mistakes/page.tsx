@@ -55,7 +55,7 @@ export default async function MistakesPage() {
                 <p className="mt-1 text-sm text-slate-600">{m.explanation_tr}</p>
               )}
               <div className="mt-2 flex items-center justify-between text-xs text-slate-400">
-                <span>Ustalaşma: %{m.mastery_score ?? 0}</span>
+                <span>Ustalık: {m.mastery_score ?? 0}/5</span>
                 {m.last_seen_at && (
                   <span>
                     Son: {new Date(m.last_seen_at).toLocaleDateString("tr-TR")}

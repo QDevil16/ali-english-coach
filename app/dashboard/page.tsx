@@ -5,6 +5,7 @@ import { Card, CardTitle, CardText } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { StatCard, SkillRow } from "@/components/dashboard/StatCard";
 import { computeStreak } from "@/lib/streak";
+import { isDue } from "@/lib/srs";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +76,23 @@ export default async function DashboardPage() {
   );
   const completed = attempts?.length ?? 0;
 
+  // Tekrar hazır (spaced repetition) sayısı
+  const [{ data: vocab }, { data: dueMistakes }] = await Promise.all([
+    supabase
+      .from("vocabulary")
+      .select("mastery_score, last_seen_at")
+      .eq("user_id", user!.id),
+    supabase
+      .from("mistakes")
+      .select("mastery_score, last_seen_at")
+      .eq("user_id", user!.id),
+  ]);
+  const dueCount =
+    (vocab ?? []).filter((v) => isDue(v.mastery_score ?? 0, v.last_seen_at))
+      .length +
+    (dueMistakes ?? []).filter((m) => isDue(m.mastery_score ?? 0, m.last_seen_at))
+      .length;
+
   return (
     <AppShell title="Ali English Coach">
       <div className="space-y-6">
@@ -106,6 +124,29 @@ export default async function DashboardPage() {
             </LinkButton>
           </div>
         </Card>
+
+        {/* Tekrar (spaced repetition) */}
+        <div className="grid grid-cols-2 gap-2">
+          <Link
+            href="/review"
+            className="rounded-2xl border border-brand bg-brand-light p-4"
+          >
+            <div className="text-sm font-semibold text-brand-dark">🔁 Tekrar</div>
+            <div className="mt-1 text-2xl font-extrabold text-slate-900">
+              {dueCount}
+            </div>
+            <div className="text-xs text-slate-500">hazır kart</div>
+          </Link>
+          <Link
+            href="/vocabulary"
+            className="rounded-2xl border border-slate-200 bg-white p-4"
+          >
+            <div className="text-sm font-semibold text-slate-700">📚 Kelimelerim</div>
+            <div className="mt-1 text-xs text-slate-500">
+              öğrendiğin kelimeler ve tekrar
+            </div>
+          </Link>
+        </div>
 
         {/* Konuşma pratiği */}
         <Card>

@@ -45,11 +45,38 @@ export async function POST(req: Request) {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await supabase
+  const { data: lessonRow } = await supabase
     .from("lessons")
     .update({ status: "done" })
     .eq("id", lessonId)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("content")
+    .single();
+
+  // Dersteki kelimeleri kelime defterine ekle (varsa mevcut ilerlemeyi bozma).
+  try {
+    const sections = (lessonRow?.content as any)?.sections ?? [];
+    const words: Array<{ user_id: string; word: string; meaning_tr: string }> = [];
+    for (const s of sections) {
+      if (Array.isArray(s?.words)) {
+        for (const w of s.words) {
+          if (w?.word)
+            words.push({
+              user_id: user.id,
+              word: String(w.word).toLowerCase().trim(),
+              meaning_tr: w.tr ?? "",
+            });
+        }
+      }
+    }
+    if (words.length) {
+      await supabase
+        .from("vocabulary")
+        .upsert(words, { onConflict: "user_id,word", ignoreDuplicates: true });
+    }
+  } catch {
+    // vocabulary tablosu yoksa sessiz geç.
+  }
 
   // Günlük ilerleme metriğini güncelle (aynı gün ise topla).
   const day = new Date().toISOString().slice(0, 10);

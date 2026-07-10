@@ -200,7 +200,25 @@ create policy "progress_self" on public.progress_metrics
 create policy "memories_self" on public.ai_memories
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
+-- ---------- vocabulary (kelime defteri + spaced repetition) ----------
+create table if not exists public.vocabulary (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  word text not null,
+  meaning_tr text,
+  example text,
+  mastery_score integer default 0,
+  repeat_count integer default 0,
+  last_seen_at timestamptz default now(),
+  created_at timestamptz default now(),
+  unique (user_id, word)
+);
+alter table public.vocabulary enable row level security;
+create policy "vocab_self" on public.vocabulary
+  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+
 -- ---------- indexler ----------
+create index if not exists idx_vocab_user on public.vocabulary(user_id);
 create index if not exists idx_learner_user on public.learner_profiles(user_id);
 create index if not exists idx_curriculums_user on public.curriculums(user_id);
 create index if not exists idx_lessons_user on public.lessons(user_id);
