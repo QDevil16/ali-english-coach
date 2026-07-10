@@ -24,7 +24,7 @@ npm run dev   # http://localhost:3010
 - [x] Aşama 4 — AI altyapısı
 - [x] Aşama 5 — Dashboard & müfredat
 - [x] Aşama 6 — Günlük ders sistemi
-- [ ] Aşama 7 — Hatalarım / ilerleme / ayarlar
+- [x] Aşama 7 — Hatalarım / ilerleme / ayarlar
 - [ ] Aşama 8 — Opsiyonel ses altyapısı
 - [ ] Aşama 9 — VPS deployment
 - [ ] Aşama 10 — Final kontrol
