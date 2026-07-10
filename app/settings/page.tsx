@@ -22,10 +22,22 @@ export default function SettingsPage() {
   const [sound, setSound] = useState<boolean>(true);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<{
+    ai: boolean;
+    textModel: string | null;
+    supabase: boolean;
+    serviceRole: boolean;
+  } | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
     setRate(Number(localStorage.getItem("aec.speechRate")) || 1);
     setSound(localStorage.getItem("aec.sound") !== "off");
+    fetch("/api/status")
+      .then((r) => r.json())
+      .then(setStatus)
+      .catch(() => {});
     (async () => {
       const supabase = createClient();
       const {
@@ -40,6 +52,38 @@ export default function SettingsPage() {
       if (data?.daily_minutes) setMinutes(data.daily_minutes);
     })();
   }, []);
+
+  async function resetData() {
+    if (
+      !confirm(
+        "Tüm derslerin, hataların, müfredatın ve ilerlemen silinecek. Hesabın ve seviye bilgin kalır. Emin misin?",
+      )
+    )
+      return;
+    setBusy("reset");
+    setMsg(null);
+    const res = await fetch("/api/account/reset", { method: "POST" });
+    setBusy(null);
+    setMsg(res.ok ? "Öğrenme verilerin sıfırlandı." : "Sıfırlanamadı.");
+  }
+
+  async function deleteAccount() {
+    if (!confirm("Hesabın ve TÜM verilerin kalıcı silinecek. Geri alınamaz. Emin misin?"))
+      return;
+    if (!confirm("Son onay: hesabı silmek istediğine emin misin?")) return;
+    setBusy("delete");
+    setMsg(null);
+    const res = await fetch("/api/account/delete", { method: "POST" });
+    if (res.ok) {
+      await createClient().auth.signOut();
+      window.location.href = "/";
+    } else {
+      setBusy(null);
+      setMsg(
+        "Silinemedi. Sunucuda SUPABASE_SERVICE_ROLE_KEY tanımlı olmalı.",
+      );
+    }
+  }
 
   function setRatePref(v: number) {
     setRate(v);
@@ -131,27 +175,73 @@ export default function SettingsPage() {
         <Card>
           <CardTitle>Ders dili</CardTitle>
           <CardText>
-            Açıklamalar Türkçe, alıştırmalar İngilizce. (Sabit)
+            Açıklamalar Türkçe, alıştırmalar İngilizce. Bu sürümde sabittir.
           </CardText>
         </Card>
 
         <Card>
-          <CardTitle>Geliştirici — AI modelleri</CardTitle>
-          <CardText>
-            Model isimleri sunucudaki <code>.env.local</code> dosyasından
-            okunur (OPENAI_TEXT_MODEL vb.). Boşsa sistem mock modda çalışır.
-          </CardText>
+          <CardTitle>Sistem durumu</CardTitle>
+          {status ? (
+            <div className="mt-1 space-y-1 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Yapay zekâ</span>
+                <span
+                  className={`font-semibold ${
+                    status.ai ? "text-green-600" : "text-amber-600"
+                  }`}
+                >
+                  {status.ai
+                    ? `Aktif · ${status.textModel}`
+                    : "Kapalı (mock mod)"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Supabase</span>
+                <span className={status.supabase ? "text-green-600" : "text-red-600"}>
+                  {status.supabase ? "Bağlı" : "Yok"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Hesap silme yetkisi</span>
+                <span className={status.serviceRole ? "text-green-600" : "text-amber-600"}>
+                  {status.serviceRole ? "Var" : "Yok"}
+                </span>
+              </div>
+              {!status.ai && (
+                <p className="pt-1 text-xs text-slate-400">
+                  Gerçek AI için sunucudaki .env.local dosyasına
+                  OPENAI_API_KEY ekle ve uygulamayı yeniden başlat.
+                </p>
+              )}
+            </div>
+          ) : (
+            <CardText>Kontrol ediliyor...</CardText>
+          )}
         </Card>
 
         <Card>
           <CardTitle>Veri ve hesap</CardTitle>
-          <CardText>Bu işlemler MVP&apos;de henüz aktif değil.</CardText>
+          {msg && (
+            <div className="mt-2">
+              <Alert kind="success">{msg}</Alert>
+            </div>
+          )}
           <div className="mt-3 space-y-2">
-            <Button variant="ghost" disabled className="w-full">
-              Verileri Sıfırla (yakında)
+            <Button
+              variant="secondary"
+              onClick={resetData}
+              disabled={busy !== null}
+              className="w-full"
+            >
+              {busy === "reset" ? "Sıfırlanıyor..." : "Öğrenme Verilerini Sıfırla"}
             </Button>
-            <Button variant="ghost" disabled className="w-full text-red-500">
-              Hesabı Sil (yakında)
+            <Button
+              variant="ghost"
+              onClick={deleteAccount}
+              disabled={busy !== null}
+              className="w-full text-red-500"
+            >
+              {busy === "delete" ? "Siliniyor..." : "Hesabı Sil"}
             </Button>
           </div>
         </Card>
