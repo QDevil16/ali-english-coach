@@ -22,7 +22,7 @@ npm run dev   # http://localhost:3010
 - [x] Aşama 2 — Supabase & Auth
 - [x] Aşama 3 — Onboarding & seviye testi
 - [x] Aşama 4 — AI altyapısı
-- [ ] Aşama 5 — Dashboard & müfredat
+- [x] Aşama 5 — Dashboard & müfredat
 - [ ] Aşama 6 — Günlük ders sistemi
 - [ ] Aşama 7 — Hatalarım / ilerleme / ayarlar
 - [ ] Aşama 8 — Opsiyonel ses altyapısı
