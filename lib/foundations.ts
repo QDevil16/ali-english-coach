@@ -383,6 +383,246 @@ FOUNDATIONS.push(
   },
 );
 
+// Ek içerik: Modül 0/1 genişletme + Modül 3 (B1).
+FOUNDATIONS.push(
+  {
+    slug: "family",
+    title: "Aile ve İnsanlar",
+    level: "A0",
+    summary: "Aile üyeleri ve insanları anlatmak.",
+    content: {
+      title: "Aile ve İnsanlar",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["vocabulary"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Aile üyelerini ve insanları anlatmayı öğreniyoruz." },
+        { type: "vocab", title: "Aile", words: [
+          { word: "mother", tr: "anne" }, { word: "father", tr: "baba" }, { word: "brother", tr: "erkek kardeş" }, { word: "sister", tr: "kız kardeş" }, { word: "son", tr: "oğul" }, { word: "daughter", tr: "kız evlat" }, { word: "wife", tr: "eş (kadın)" }, { word: "husband", tr: "eş (erkek)" },
+        ] },
+        { type: "teach", title: "Kalıp", content: "• This is my mother. = Bu benim annem.\n• I have two brothers. = İki erkek kardeşim var.\n• Her name is Ayşe. = Onun (kadın) adı Ayşe.\n\n'my' = benim, 'his' = onun (erkek), 'her' = onun (kadın)." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'sister' ne demek?", options: ["kız kardeş", "erkek kardeş", "anne"], answer: "kız kardeş" },
+          { type: "multiple_choice", question: "'This is my father.' ne demek?", options: ["Bu benim babam.", "Baban nerede?", "Bir babam var."], answer: "Bu benim babam." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Aileni tanıt: 'I have ...' veya 'This is my ...'" },
+        { type: "summary", title: "Özet", content: "Aile kelimeleri + my/his/her. This is my ... = bu benim ..." },
+      ],
+    },
+  },
+  {
+    slug: "food",
+    title: "Yiyecek ve İçecek",
+    level: "A0",
+    summary: "Yemek isimleri ve 'I want / I'd like'.",
+    content: {
+      title: "Yiyecek ve İçecek",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["vocabulary", "speaking"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Yiyecek-içecek isimlerini ve sipariş kalıplarını öğreniyoruz." },
+        { type: "vocab", title: "Kelimeler", words: [
+          { word: "water", tr: "su" }, { word: "bread", tr: "ekmek" }, { word: "coffee", tr: "kahve" }, { word: "tea", tr: "çay" }, { word: "milk", tr: "süt" }, { word: "apple", tr: "elma" }, { word: "chicken", tr: "tavuk" }, { word: "rice", tr: "pilav/pirinç" },
+        ] },
+        { type: "teach", title: "Sipariş kalıbı", content: "• I want water. = Su istiyorum.\n• I'd like a coffee, please. = Bir kahve istiyorum, lütfen. (kibar)\n• Can I have some bread? = Biraz ekmek alabilir miyim?\n\n'I'd like' = 'I want'in kibar hali." },
+        { type: "repeat", title: "Tekrarla", sentence: "I'd like a coffee, please." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'water' ne demek?", options: ["su", "ekmek", "süt"], answer: "su" },
+          { type: "multiple_choice", question: "Kibar sipariş:", options: ["Give me coffee.", "I'd like a coffee, please.", "Coffee!"], answer: "I'd like a coffee, please." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Bir şey sipariş et: 'I'd like ...'" },
+        { type: "summary", title: "Özet", content: "Yiyecek kelimeleri + I'd like ... (kibar istek). Restoran/kafede işine yarar." },
+      ],
+    },
+  },
+  {
+    slug: "time",
+    title: "Saat ve Zaman",
+    level: "A1",
+    summary: "Saati sormak ve söylemek.",
+    content: {
+      title: "Saat ve Zaman",
+      level: "A1",
+      estimatedMinutes: 15,
+      focus: ["vocabulary"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Saati sormayı ve söylemeyi öğreniyoruz." },
+        { type: "teach", title: "Saat sorma", content: "• What time is it? = Saat kaç?\n• It's three o'clock. = Saat üç.\n• It's half past three. = Saat üç buçuk.\n• It's quarter past three. = Saat üçü çeyrek geçiyor.\n• It's quarter to four. = Dörde çeyrek var." },
+        { type: "teach", title: "at ile saat", content: "Bir saatte bir şey yapmak için 'at':\n• I get up at seven. = Yedide kalkarım.\n• The class starts at nine. = Ders dokuzda başlar." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'What time is it?' ne demek?", options: ["Saat kaç?", "Ne zaman?", "Kaç tane?"], answer: "Saat kaç?" },
+          { type: "multiple_choice", question: "'at seven' ne demek?", options: ["yedide", "yedi tane", "yediye kadar"], answer: "yedide" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Kaçta kalkarsın? 'I get up at ...'" },
+        { type: "summary", title: "Özet", content: "What time is it? = saat kaç, It's ... o'clock, saatte iş için 'at'." },
+      ],
+    },
+  },
+  {
+    slug: "this-that",
+    title: "this / that / these / those",
+    level: "A1",
+    summary: "Bu / şu / bunlar / şunlar.",
+    content: {
+      title: "this / that / these / those",
+      level: "A1",
+      estimatedMinutes: 12,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Yakın-uzak ve tekil-çoğul nesneleri göstermeyi öğreniyoruz." },
+        { type: "teach", title: "Kural", content: "• this = bu (yakın, tekil)\n• that = şu/o (uzak, tekil)\n• these = bunlar (yakın, çoğul)\n• those = şunlar/onlar (uzak, çoğul)\n\n• This is a pen. = Bu bir kalem.\n• Those are cars. = Şunlar araba." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'these' ne demek?", options: ["bunlar", "şu", "bu"], answer: "bunlar" },
+          { type: "multiple_choice", question: "___ is my book. (yakın, tekil)", options: ["This", "These", "Those"], answer: "This" },
+        ] },
+        { type: "summary", title: "Özet", content: "this/that tekil (yakın/uzak), these/those çoğul (yakın/uzak)." },
+      ],
+    },
+  },
+  {
+    slug: "plurals-articles",
+    title: "a / an ve Çoğullar",
+    level: "A1",
+    summary: "Bir tane demek ve çoğul yapmak.",
+    content: {
+      title: "a / an ve Çoğullar",
+      level: "A1",
+      estimatedMinutes: 15,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "'Bir tane' demeyi (a/an) ve çoğul yapmayı öğreniyoruz." },
+        { type: "teach", title: "a / an", content: "Tekil sayılabilen nesnelerde 'bir' için:\n• a = sessiz harfle başlayanlar: a book, a car\n• an = sesli harfle başlayanlar (a,e,i,o,u): an apple, an egg, an hour\n\nKural sese göredir: an hour (h okunmaz)." },
+        { type: "teach", title: "Çoğul", content: "Çoğul için sona -s eklenir:\n• book → books, car → cars\n• -s, -sh, -ch → -es: bus → buses, watch → watches\n• y → ies: baby → babies\n\nDüzensizler: man → men, woman → women, child → children." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "___ apple", options: ["a", "an", "the"], answer: "an" },
+          { type: "multiple_choice", question: "'child' çoğulu:", options: ["childs", "children", "childes"], answer: "children" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "a/an ile bir cümle yaz: 'I have a/an ...'" },
+        { type: "summary", title: "Özet", content: "a (sessiz) / an (sesli), çoğul +s (bazıları düzensiz: children, men, women)." },
+      ],
+    },
+  },
+  {
+    slug: "can",
+    title: "can (yapabilmek)",
+    level: "A1",
+    summary: "Yetenek, izin ve rica.",
+    content: {
+      title: "can — yapabilmek",
+      level: "A1",
+      estimatedMinutes: 12,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Yetenek (yapabilmek), izin ve rica için 'can' öğreniyoruz." },
+        { type: "teach", title: "Kural", content: "can + fiil (düz hali). Herkes için aynı (-s yok):\n• I can swim. = Yüzebilirim.\n• She can drive. = Araba kullanabilir.\n\nOlumsuz: can't (cannot) → I can't come.\nSoru: Can you help me? = Yardım eder misin?" },
+        { type: "repeat", title: "Tekrarla", sentence: "Can you help me, please?" },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'I can swim.' ne demek?", options: ["Yüzebilirim.", "Yüzmeyi severim.", "Yüzdüm."], answer: "Yüzebilirim." },
+          { type: "multiple_choice", question: "Doğru:", options: ["She can drives.", "She can drive.", "She cans drive."], answer: "She can drive." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Ne yapabilirsin? 'I can ...'" },
+        { type: "summary", title: "Özet", content: "can + fiil = yapabilmek (herkes için aynı, -s yok). can't = yapamaz." },
+      ],
+    },
+  },
+  {
+    slug: "present-perfect",
+    title: "Present Perfect (have + V3)",
+    level: "B1",
+    summary: "Geçmişte olan ama şimdiyle bağlı olaylar.",
+    content: {
+      title: "Present Perfect",
+      level: "B1",
+      estimatedMinutes: 25,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "'have/has + fiilin 3. hali' yapısını öğreniyoruz. Türklerin en çok zorlandığı zaman." },
+        { type: "teach", title: "Mantık", content: "have/has + V3 (fiilin 3. hali).\nGeçmişte oldu ama ŞİMDİYLE bağlantısı var; tam zaman belirtilmez:\n• I have finished. = Bitirdim (şu an bitmiş durumda).\n• She has gone. = Gitti (hâlâ yok).\n\nGeçmiş zamandan farkı: 'I finished at 5' (kesin geçmiş) vs 'I have finished' (sonuç şimdi önemli)." },
+        { type: "teach", title: "for / since / just / already / yet", content: "• for = süre: for two years (iki yıldır)\n• since = başlangıç: since 2019\n• just = az önce: I have just eaten.\n• already = zaten: I have already seen it.\n• yet = henüz (olumsuz/soru): I haven't finished yet." },
+        { type: "examples", title: "Örnekler", examples: ["I have lived here for five years.", "She has just left.", "Have you ever been to London?", "We haven't eaten yet."] },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "I have ___ my homework.", options: ["do", "did", "done"], answer: "done" },
+          { type: "multiple_choice", question: "___ two years kullanımı:", options: ["since", "for", "yet"], answer: "for" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "'I have ...' ile bir cümle yaz (ör: I have finished...)." },
+        { type: "summary", title: "Özet", content: "Present perfect = have/has + V3. Geçmiş-şimdi bağlantısı. for/since/just/already/yet ile kullanılır." },
+      ],
+    },
+  },
+  {
+    slug: "modals",
+    title: "should / must / have to",
+    level: "B1",
+    summary: "Tavsiye, zorunluluk ve kurallar.",
+    content: {
+      title: "should / must / have to",
+      level: "B1",
+      estimatedMinutes: 20,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Tavsiye, zorunluluk ve kural ifadelerini öğreniyoruz." },
+        { type: "teach", title: "Kural", content: "Hepsi + fiilin düz hali:\n• should = -meli (tavsiye): You should rest. = Dinlenmelisin.\n• must / have to = zorunluluk: I must go. / I have to work.\n• mustn't = yasak: You mustn't smoke here.\n• don't have to = gerek yok: You don't have to come." },
+        { type: "examples", title: "Örnekler", examples: ["You should see a doctor.", "I have to finish this today.", "You mustn't be late.", "We don't have to pay."] },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "Tavsiye: You ___ rest.", options: ["should", "mustn't", "don't have to"], answer: "should" },
+          { type: "multiple_choice", question: "'mustn't' ne anlatır?", options: ["yasak", "gerek yok", "tavsiye"], answer: "yasak" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Bir tavsiye ver: 'You should ...'" },
+        { type: "summary", title: "Özet", content: "should = -meli (tavsiye), must/have to = zorunluluk, mustn't = yasak, don't have to = gerek yok." },
+      ],
+    },
+  },
+  {
+    slug: "comparatives",
+    title: "Karşılaştırma (bigger, the biggest)",
+    level: "B1",
+    summary: "Daha büyük, en büyük.",
+    content: {
+      title: "Karşılaştırma ve Üstünlük",
+      level: "B1",
+      estimatedMinutes: 20,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "İki şeyi karşılaştırmayı ve 'en'i öğreniyoruz." },
+        { type: "teach", title: "Kural", content: "Kısa sıfatlar (+er / +est):\n• big → bigger → the biggest\n• old → older → the oldest\n\nUzun sıfatlar (more / most):\n• expensive → more expensive → the most expensive\n\nDüzensiz: good → better → the best, bad → worse → the worst." },
+        { type: "teach", title: "than ve the", content: "• A is bigger THAN B. = A, B'den daha büyük.\n• A is THE biggest. = A en büyük.\n\nKarşılaştırmada 'than', üstünlükte 'the' kullanılır." },
+        { type: "examples", title: "Örnekler", examples: ["My car is faster than yours.", "This is the best restaurant.", "She is taller than me.", "It's the most beautiful city."] },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'good' üstünlük hali:", options: ["goodest", "the best", "more good"], answer: "the best" },
+          { type: "multiple_choice", question: "This is ___ than that.", options: ["big", "bigger", "biggest"], answer: "bigger" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "İki şeyi karşılaştır: 'X is ...er than Y.'" },
+        { type: "summary", title: "Özet", content: "Kısa: +er/+est. Uzun: more/most. than (karşılaştırma), the (üstünlük). good→better→best." },
+      ],
+    },
+  },
+  {
+    slug: "conditionals",
+    title: "Şart Cümleleri (if)",
+    level: "B1",
+    summary: "Eğer ... olursa ... olur.",
+    content: {
+      title: "Şart Cümleleri — if",
+      level: "B1",
+      estimatedMinutes: 20,
+      focus: ["grammar"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "'Eğer ... olursa ...' kalıbını öğreniyoruz." },
+        { type: "teach", title: "1. tip şart", content: "Gerçek/olası durumlar:\nIf + geniş zaman, will + fiil\n• If it rains, I will stay home. = Yağmur yağarsa evde kalırım.\n• If you study, you will pass. = Çalışırsan geçersin.\n\nDİKKAT: 'if' kısmında 'will' KULLANILMAZ (If it will rain YANLIŞ)." },
+        { type: "teach", title: "0. tip (genel gerçek)", content: "Her zaman doğru olan şeyler:\nIf + geniş zaman, geniş zaman\n• If you heat water, it boils. = Suyu ısıtırsan kaynar." },
+        { type: "examples", title: "Örnekler", examples: ["If I have time, I will call you.", "If you don't hurry, you will be late.", "If it is hot, I open the window."] },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "If it ___, I will stay home.", options: ["rains", "will rain", "rained"], answer: "rains" },
+          { type: "multiple_choice", question: "'If you study, you will pass.' ne demek?", options: ["Çalışırsan geçersin.", "Çalıştın ve geçtin.", "Çalışmalısın."], answer: "Çalışırsan geçersin." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Bir şart cümlesi yaz: 'If ..., I will ...'" },
+        { type: "summary", title: "Özet", content: "1. tip: If + geniş zaman, will + fiil. 'if' kısmında will yok. Şart → sonuç." },
+      ],
+    },
+  },
+);
+
 export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = [
   {
     title: "Modül 0 — Sıfırdan Başlangıç",
@@ -392,7 +632,10 @@ export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = 
       "introduce",
       "numbers",
       "colors-things",
+      "family",
+      "food",
       "days-months",
+      "time",
       "have-like",
       "polite",
     ],
@@ -400,7 +643,14 @@ export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = 
   {
     title: "Modül 1 — Temel Gramer (A1)",
     note: "İlk gramer kuralları.",
-    slugs: ["to-be", "present-simple", "present-continuous"],
+    slugs: [
+      "to-be",
+      "this-that",
+      "plurals-articles",
+      "present-simple",
+      "present-continuous",
+      "can",
+    ],
   },
   {
     title: "Modül 2 — Günlük İngilizce (A2)",
@@ -412,6 +662,11 @@ export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = 
       "there-is-are",
       "sentence-structure",
     ],
+  },
+  {
+    title: "Modül 3 — Orta Seviye (B1)",
+    note: "İleri yapılar; A2'yi bitirince gel.",
+    slugs: ["present-perfect", "modals", "comparatives", "conditionals"],
   },
 ];
 

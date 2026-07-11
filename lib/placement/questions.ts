@@ -36,4 +36,12 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   { id: "s1", category: "sentence", prompt: 'Doğru sıralama: "you / are / how"', options: ["Are you how?", "How are you?", "You are how?", "How you are?"], answerIndex: 1 },
   { id: "s2", category: "sentence", prompt: 'Doğru sıralama: "name / is / my / Ali"', options: ["My name is Ali.", "Name my is Ali.", "Is my name Ali.", "Ali my name is."], answerIndex: 0 },
   { id: "s3", category: "sentence", prompt: 'Doğru sıralama: "coffee / like / I / don\'t"', options: ["I don't like coffee.", "I like don't coffee.", "Don't I like coffee.", "Coffee I don't like."], answerIndex: 0 },
+
+  // ZOR sorular (A2–B1 ayrıştırıcı) — testin tavanını gerçekçi yapar
+  { id: "h1", category: "grammar", prompt: "I have ___ in Istanbul since 2019.", options: ["live", "lived", "living", "lives"], answerIndex: 1 },
+  { id: "h2", category: "grammar", prompt: "If it ___ tomorrow, we will stay home.", options: ["rains", "rained", "will rain", "raining"], answerIndex: 0 },
+  { id: "h3", category: "grammar", prompt: "This book is ___ than that one.", options: ["more interesting", "interestinger", "most interesting", "interesting"], answerIndex: 0 },
+  { id: "h4", category: "grammar", prompt: "You ___ smoke here. It's not allowed.", options: ["mustn't", "must", "can", "should"], answerIndex: 0 },
+  { id: "h5", category: "vocabulary", prompt: '"although" ne demek?', options: ["çünkü", "-e rağmen", "bu yüzden", "ve"], answerIndex: 1 },
+  { id: "h6", category: "reading", prompt: 'Metin: "She had already left when I arrived." Kim önce geldi?', options: ["Ben", "O (kadın) gitmişti, ben sonra geldim", "Aynı anda", "Belli değil"], answerIndex: 1 },
 ];

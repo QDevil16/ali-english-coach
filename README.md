@@ -15,12 +15,15 @@ Kullanıcı derslerde dinler ve cevaplar; hataları kaydedilir ve sonraki
 dersler bu verilere göre şekillenir.
 
 ## 2. Özellikler
-- Seviye testi + AI seviye analizi (onaylanabilir/değiştirilebilir)
-- Kişisel 8–12 haftalık müfredat (bir kez üretilir, DB'de saklanır)
-- Günlük ders akışı: dinleme, kalıp, anlama, cümle kurma, mini diyalog
-- Tarayıcı sesi ile dinleme (yavaş / normal), ayarlanabilir hız
-- Hata takibi ve tekrar; ilerleme metrikleri
-- `OPENAI_API_KEY` yoksa **mock modda** çalışır (bozulmaz)
+- **Sıfırdan İngilizce kursu:** Modül 0 (selamlaşma, tanışma, sayılar, aile, yiyecek, saat…) → Modül 1–2 (gramer/zamanlar) → Modül 3 (B1). Kural → örnek → pratik. AI'sız da çalışır.
+- Seviye testi: sesli dinleme + mikrofonla konuşma + zorlu ayrıştırıcı sorular; sıkı seviye eşikleri
+- Düzenlenebilir öğrenme profili (hedef, zorluk, tarz) → müfredat/dersler buna göre
+- Kişisel AI müfredatı + **ilerleyen** günlük dersler (önceki dersleri/hataları dikkate alır)
+- Öğreten ders akışı: 💡 mantık anlatımı, kelime, dinle-tekrarla (mikrofon), kalıp, kademeli pratik, diyalog
+- **Spaced repetition** tekrar sistemi + **kelime defteri** + rozet/seri
+- Konuşma pratiği: **canlı OpenAI Realtime** ses + ücretsiz tarayıcı sesli mod
+- Dürüst değerlendirme (telaffuz/cümle) — yanlışı övmez, doğrusunu gösterir
+- `OPENAI_API_KEY` yoksa **mock modda** çalışır (bozulmaz); kurs/temeller her hâlükârda tam
 
 ## 3. Teknolojiler
 Next.js (App Router) · TypeScript · Tailwind · Supabase (Auth + PostgreSQL +
@@ -37,6 +40,9 @@ RLS) · OpenAI (env'den model) · Browser SpeechSynthesis · VPS + Nginx + PM2
 Supabase → **SQL Editor** → `supabase/schema.sql` içeriğini yapıştır → Run.
 Bu; tabloları, RLS politikalarını, otomatik profil trigger'ını ve indexleri
 kurar.
+
+> Daha önce kurduysan (kelime defteri tablosu için): `supabase/migration-vocabulary.sql`
+> dosyasını bir kez çalıştır.
 
 ## 6. .env.local oluşturma
 `.env.local.example` dosyasını kopyala:

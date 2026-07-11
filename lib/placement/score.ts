@@ -1,9 +1,10 @@
 import type { CEFR, PlacementQuestion, PlacementResult } from "@/lib/types";
 
 function levelFromPct(pct: number): CEFR {
-  if (pct < 0.3) return "A0";
-  if (pct < 0.55) return "A1";
-  if (pct < 0.75) return "A2";
+  // Sıkı eşikler: kolay soruları bilmek A2/B1 anlamına gelmez.
+  if (pct < 0.4) return "A0";
+  if (pct < 0.65) return "A1";
+  if (pct < 0.85) return "A2";
   return "B1";
 }
 
