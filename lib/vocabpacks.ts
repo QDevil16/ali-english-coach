@@ -2,7 +2,7 @@ export type VocabPack = {
   slug: string;
   title: string;
   emoji: string;
-  words: Array<{ word: string; tr: string }>;
+  words: Array<{ word: string; tr: string; ex?: string }>;
 };
 
 export const VOCAB_PACKS: VocabPack[] = [
@@ -55,6 +55,70 @@ export const VOCAB_PACKS: VocabPack[] = [
     ],
   },
 ];
+
+// En sık kullanılan kelimeler (örnek cümleli) — çekirdek kelime hazinesi.
+VOCAB_PACKS.push(
+  {
+    slug: "core-verbs",
+    title: "En sık fiiller",
+    emoji: "⭐",
+    words: [
+      { word: "be", tr: "olmak", ex: "I am happy." },
+      { word: "have", tr: "sahip olmak", ex: "I have a car." },
+      { word: "do", tr: "yapmak", ex: "I do my homework." },
+      { word: "make", tr: "yapmak/üretmek", ex: "I make coffee." },
+      { word: "get", tr: "almak/olmak", ex: "I get up early." },
+      { word: "go", tr: "gitmek", ex: "I go to work." },
+      { word: "know", tr: "bilmek", ex: "I know the answer." },
+      { word: "think", tr: "düşünmek", ex: "I think it is good." },
+      { word: "take", tr: "almak", ex: "I take the bus." },
+      { word: "see", tr: "görmek", ex: "I see a bird." },
+      { word: "come", tr: "gelmek", ex: "Come here, please." },
+      { word: "want", tr: "istemek", ex: "I want water." },
+      { word: "use", tr: "kullanmak", ex: "I use a phone." },
+      { word: "find", tr: "bulmak", ex: "I can't find my keys." },
+      { word: "give", tr: "vermek", ex: "Give me the book." },
+    ],
+  },
+  {
+    slug: "core-adjectives",
+    title: "En sık sıfatlar",
+    emoji: "⭐",
+    words: [
+      { word: "good", tr: "iyi", ex: "It is a good day." },
+      { word: "bad", tr: "kötü", ex: "The weather is bad." },
+      { word: "big", tr: "büyük", ex: "It is a big house." },
+      { word: "small", tr: "küçük", ex: "I have a small car." },
+      { word: "new", tr: "yeni", ex: "This is my new phone." },
+      { word: "old", tr: "eski/yaşlı", ex: "My car is old." },
+      { word: "happy", tr: "mutlu", ex: "I am happy today." },
+      { word: "easy", tr: "kolay", ex: "This is easy." },
+      { word: "hard", tr: "zor", ex: "English is hard." },
+      { word: "important", tr: "önemli", ex: "This is important." },
+      { word: "beautiful", tr: "güzel", ex: "It is a beautiful city." },
+      { word: "different", tr: "farklı", ex: "We are different." },
+    ],
+  },
+  {
+    slug: "core-function",
+    title: "Bağlaç ve edatlar",
+    emoji: "🔗",
+    words: [
+      { word: "and", tr: "ve", ex: "tea and coffee" },
+      { word: "but", tr: "ama", ex: "small but nice" },
+      { word: "because", tr: "çünkü", ex: "I stayed because I was tired." },
+      { word: "so", tr: "bu yüzden", ex: "It was late, so I left." },
+      { word: "if", tr: "eğer", ex: "If it rains, I stay home." },
+      { word: "when", tr: "-diğinde", ex: "Call me when you arrive." },
+      { word: "in", tr: "içinde/-de", ex: "in the box" },
+      { word: "on", tr: "üstünde/-de", ex: "on the table" },
+      { word: "at", tr: "-de (nokta)", ex: "at home" },
+      { word: "with", tr: "ile", ex: "Come with me." },
+      { word: "about", tr: "hakkında", ex: "a book about cats" },
+      { word: "for", tr: "için", ex: "This is for you." },
+    ],
+  },
+);
 
 export function getVocabPack(slug: string): VocabPack | undefined {
   return VOCAB_PACKS.find((p) => p.slug === slug);

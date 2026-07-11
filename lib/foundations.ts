@@ -621,6 +621,31 @@ FOUNDATIONS.push(
       ],
     },
   },
+  {
+    slug: "irregular-verbs",
+    title: "Fiilin 3 Hali (V1-V2-V3)",
+    level: "A2",
+    summary: "go-went-gone gibi düzensiz fiiller.",
+    content: {
+      title: "Fiilin 3 Hali — Düzensiz Fiiller",
+      level: "A2",
+      estimatedMinutes: 20,
+      focus: ["grammar", "vocabulary"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "İngilizce fiillerin neden 3 hali olduğunu ve nerede kullanıldığını öğreniyoruz." },
+        { type: "teach", title: "Mantık", content: "Her fiilin 3 hali vardır:\n• V1 = yalın hal (go, eat)\n• V2 = geçmiş hal (went, ate) → geçmiş zamanda kullanılır\n• V3 = partisip (gone, eaten) → have/has ile (present perfect) kullanılır\n\nNormal fiiller: -ed ile üçü de aynı (work-worked-worked).\nDüzensiz fiiller: değişir ve EZBER ister (go-went-gone)." },
+        { type: "teach", title: "Nerede kullanılır?", content: "• I go to work. (V1 - geniş zaman)\n• I went to work. (V2 - geçmiş)\n• I have gone. (V3 - present perfect, have ile)\n\nAynı mantık: eat / ate / eaten, see / saw / seen, take / took / taken." },
+        { type: "examples", title: "En sık olanlar", examples: ["go – went – gone", "eat – ate – eaten", "see – saw – seen", "do – did – done", "have – had – had"] },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'go' fiilinin geçmişi (V2):", options: ["goed", "went", "gone"], answer: "went" },
+          { type: "multiple_choice", question: "I have ___ my lunch. (V3)", options: ["eat", "ate", "eaten"], answer: "eaten" },
+          { type: "multiple_choice", question: "'see' fiilinin V2 hali:", options: ["saw", "seen", "seed"], answer: "saw" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Geçmiş zamanda bir cümle yaz (V2 kullan): 'Yesterday I ...'" },
+        { type: "summary", title: "Özet", content: "V1 (yalın), V2 (geçmiş), V3 (have ile). Düzensiz fiiller ezber ister. Tam listeyi 'Düzensiz Fiiller' sayfasında bul." },
+      ],
+    },
+  },
 );
 
 export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = [
@@ -657,6 +682,7 @@ export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = 
     note: "Zamanlar ve cümle kurma.",
     slugs: [
       "past-simple",
+      "irregular-verbs",
       "future",
       "questions",
       "there-is-are",
