@@ -203,6 +203,12 @@ export default function SettingsPage() {
               Bilgilerimi Düzenle
             </a>
             <a
+              href="/placement-test"
+              className="block rounded-xl border border-brand px-4 py-3 text-center text-sm font-semibold text-brand"
+            >
+              Seviye Testini Tekrar Çöz
+            </a>
+            <a
               href="/curriculum"
               className="block rounded-xl border border-brand px-4 py-3 text-center text-sm font-semibold text-brand"
             >
