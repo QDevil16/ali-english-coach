@@ -50,5 +50,15 @@ export async function POST(req: Request) {
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Kişisel öğretim yöntemini profile kaydet (dersler bunu kullanır).
+  if (plan.method && profile) {
+    await supabase
+      .from("learner_profiles")
+      .update({ ai_summary: plan.method })
+      .eq("id", profile.id);
+  }
+
   return NextResponse.json({ curriculum: row, mode });
 }
+

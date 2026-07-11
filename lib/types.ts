@@ -62,6 +62,7 @@ export interface CurriculumPlan {
   title: string;
   level: string;
   durationWeeks: number;
+  method?: string;
   weeks: CurriculumWeek[];
 }
 

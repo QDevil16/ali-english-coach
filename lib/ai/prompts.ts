@@ -74,13 +74,17 @@ JSON şeması:
 }
 
 export function curriculumPrompt(input: unknown, weeks: number): string {
-  return `Kullanıcı profili:
+  return `Kullanıcı profili (özellikle 'struggle_description' = neden öğrenemedi, 'learning_style' = nasıl öğrenir):
 ${JSON.stringify(input)}
 
-${weeks} haftalık kişisel müfredat üret. Dinleme ve konuşma ağırlıklı, kısa ve tekrar eden.
+Bu kişiye ÖZEL bir öğretim yaklaşımı + ${weeks} haftalık program üret.
+ÖNCE "method": kullanıcının neden öğrenemediğini ve tarzını dikkate alan, 2-4 cümlelik Türkçe bir öğretim yöntemi yaz
+(ör: "Ezberden sıkıldığın için az gramer, bol tekrar ve dinleme; her ders sonunda kısa konuşma; Türkçe destekli.").
+Sonra dinleme+konuşma ağırlıklı, kısa ve tekrar eden haftalık program.
 JSON şeması:
-{"title": "...", "level": "A1", "durationWeeks": ${weeks},
- "weeks": [{"week":1,"goal":"...","mainTopic":"...","listeningGoal":"...","speakingGoal":"...","patterns":["..."],"reviewMistakes":["..."],"lessons":["ders başlığı", "..."]}]}`;
+{"title":"...","level":"A1","durationWeeks":${weeks},
+ "method":"Bu kişiye özel öğretim yaklaşımı (Türkçe, 2-4 cümle).",
+ "weeks":[{"week":1,"goal":"...","mainTopic":"...","listeningGoal":"...","speakingGoal":"...","patterns":["..."],"reviewMistakes":["..."],"lessons":["ders başlığı"]}]}`;
 }
 
 export function lessonPrompt(input: unknown): string {
@@ -88,48 +92,40 @@ export function lessonPrompt(input: unknown): string {
 ${JSON.stringify(input)}
 
 Sen sabırlı bir özel öğretmensin. Kullanıcı Türk, seviyesi düşük, dinleme zayıf, gramerden sıkılıyor.
-Bu, ilerleyen bir kursun DERS NUMARASI bağlamdaki "lessonNumber" olan dersidir.
-Bugünkü TEK dersi üret: TEST DEĞİL, GERÇEK BİR DERS. Önce ÖĞRET, sonra pratik yaptır.
+Bu, ilerleyen bir kursun "lessonNumber" numaralı GÜNLÜK OTURUMU'dur.
+Bağlamdaki "method" = bu kişiye özel öğretim yaklaşımı; ONA UY. "struggle" ve "learning_style"ı dikkate al.
 
-SÜREKLİLİK: "previousLessons" listesindeki konuları TEKRAR ETME; onların üstüne koy, bir adım ilerlet.
-Kısa bir "önceki dersten hatırlatma" ile başla. "mistakes" listesindeki hataları bu derse yedir (tekrar ettir).
-Müfredattaki ("curriculum") sıraya uygun ilerle. Her ders bir öncekinden biraz daha ileri olsun (nakış nakış).
+SÜREKLİLİK: "previousLessons" konularını TEKRAR ETME; üstüne koy, bir adım ilerlet.
+"mistakes" listesindeki hataları oturuma yedir. Müfredat ("curriculum") sırasına uy.
 
-PEDAGOJİ KURALLARI:
-- Konunun MANTIĞINI Türkçe anlat. "Neden böyle?" sorusunu yanıtla.
-- Türkçe ile KARŞILAŞTIR (ör: "Türkçede 'nerede yaşıyorsun', İngilizcede yardımcı fiil 'do' eklenir: Where DO you live?").
-- Sık yapılan HATAYI önceden söyle ve neden yanlış olduğunu açıkla.
-- Önce göster (model), sonra birlikte (ipuçlu), sonra tek başına (serbest). Kademeli zorluk.
-- Kısa cümleler, basit kelimeler (A1/A2). Bunaltma.
+OTURUM = ZAMAN BLOKLU, KADEMELİ AKIŞ. Bölümleri 5 FAZA ayır ve her fazın başına bir "phase" bölümü koy (minutes ile).
+Her faz kendi bölümlerini içerir. Toplam ~30 dk. Fazlar SIRAYLA:
 
-ZORUNLU YAPI — en az 14 bölüm, bu sırayla:
-1. warmup: bugün ne öğreneceğiz + neden işine yarar (content)
-2. teach: konunun mantığını Türkçe anlat, Türkçe ile karşılaştır, kuralı adım adım ver (content, uzun ve net)
-3. vocab: 4-6 kelime {"word","tr"}
-4. teach: sık yapılan hatayı açıkla — "şöyle deme, böyle de, çünkü..." (content)
-5. listening (x3, ayrı bölümler): "sentence" + "slowText" + 1 multiple_choice
-6. repeat (x2): {"sentence"} dinle-tekrarla
-7. pattern: "pattern" + "explanationTr" + "examples" (4)
-8. comprehension: 2 multiple_choice
-9. production (x2): kademeli — ilki ipuçlu ("prompt" içinde ipucu ver), ikincisi serbest
-10. dialogue: 5-6 satır (content, \\n ile)
-11. correction: geçmiş hatalardan hatırlatma (content)
-12. summary: bugün ne öğrendik + yarın ne olacak (content)
+FAZ 1 — review (~5 dk): {"type":"phase","phase":"review","title":"Isınma / dünün tekrarı","minutes":5} + kısa "correction"/"warmup" (önceki dersten hatırlatma, bugünün hedefi)
+FAZ 2 — teach (~10 dk): {"type":"phase","phase":"teach","title":"Yeni konu","minutes":10} + "teach" (mantık, Türkçe karşılaştırma) + "vocab" (4-6) + "teach" (sık hata) + "pattern"
+FAZ 3 — listen (~7 dk): {"type":"phase","phase":"listen","title":"Dinleme","minutes":7} + "listening" x2 (sentence+slowText+multiple_choice) + "repeat" x1
+FAZ 4 — practice (~5 dk): {"type":"phase","phase":"practice","title":"Pratik","minutes":5} + "comprehension" (2 mc) + "production" (ipuçlu sonra serbest)
+FAZ 5 — speak (~5-8 dk): {"type":"phase","phase":"speak","title":"Öğrendiklerinle konuş","minutes":6} + {"type":"conversation","title":"Kısa konuşma","topic":"bugünkü konu (İngilizce, kısa)","starter":"AI'nın basit açılış cümlesi + (Türkçe ipucu)"}
 
+PEDAGOJİ: mantığı Türkçe anlat, Türkçe ile karşılaştır, sık hatayı önceden söyle, kademeli (model→ipuçlu→serbest), kısa cümleler.
 Türkçe açıkla, İngilizce örnek ver. SADECE geçerli JSON döndür.
 JSON şeması:
-{"title":"...","level":"A1","estimatedMinutes":40,"focus":["listening","speaking","grammar"],
+{"title":"...","level":"A1","estimatedMinutes":30,"focus":["grammar","listening","speaking"],
  "sections":[
+  {"type":"phase","phase":"review","title":"Isınma / dünün tekrarı","minutes":5},
   {"type":"warmup","title":"Bugünkü hedef","content":"..."},
-  {"type":"teach","title":"Mantığı öğren","content":"Türkçe uzun açıklama, kural, karşılaştırma..."},
+  {"type":"phase","phase":"teach","title":"Yeni konu","minutes":10},
+  {"type":"teach","title":"Mantığı öğren","content":"Türkçe açıklama, karşılaştırma..."},
   {"type":"vocab","title":"Kelimeler","words":[{"word":"live","tr":"yaşamak"}]},
-  {"type":"teach","title":"Dikkat: sık hata","content":"'Where you live?' DEME. 'Where DO you live?' de. Çünkü..."},
+  {"type":"pattern","title":"Kalıp","pattern":"Where do you ___?","explanationTr":"...","examples":["..."]},
+  {"type":"phase","phase":"listen","title":"Dinleme","minutes":7},
   {"type":"listening","title":"Dinleme 1","sentence":"Where do you live?","slowText":"Where ... do ... you ... live?","questions":[{"type":"multiple_choice","question":"Ne demek?","options":["Nerede yaşıyorsun?","..."],"answer":"Nerede yaşıyorsun?"}]},
   {"type":"repeat","title":"Tekrarla","sentence":"Where do you live?"},
-  {"type":"pattern","title":"Kalıp","pattern":"Where do you ___?","explanationTr":"...","examples":["...","..."]},
-  {"type":"production","title":"Birlikte kur","prompt":"İpucu: 'work' fiiliyle sor. (Where do you ...?)"},
-  {"type":"dialogue","title":"Mini diyalog","content":"A: ...\\nB: ..."},
-  {"type":"summary","title":"Özet","content":"..."}
+  {"type":"phase","phase":"practice","title":"Pratik","minutes":5},
+  {"type":"comprehension","title":"Anlama","questions":[{"type":"multiple_choice","question":"...","options":["..."],"answer":"..."}]},
+  {"type":"production","title":"Cümle kur","prompt":"..."},
+  {"type":"phase","phase":"speak","title":"Öğrendiklerinle konuş","minutes":6},
+  {"type":"conversation","title":"Kısa konuşma","topic":"asking where people live/work","starter":"Hi Ali! Where do you live? (Nerede yaşıyorsun?)"}
  ]}`;
 }
 

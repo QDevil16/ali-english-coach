@@ -96,6 +96,13 @@ export default async function DashboardPage() {
   return (
     <AppShell title="Ali English Coach">
       <div className="space-y-6">
+        {profile.ai_summary && (
+          <div className="rounded-xl bg-slate-100 px-4 py-3 text-sm text-slate-700">
+            <span className="font-semibold text-slate-900">🎯 Yöntemin: </span>
+            {profile.ai_summary}
+          </div>
+        )}
+
         {/* Sıfırdan kurs */}
         <Link
           href="/foundations"
@@ -114,10 +121,13 @@ export default async function DashboardPage() {
           </div>
         </Link>
 
-        {/* Bugünkü ders */}
+        {/* Günün oturumu */}
         <Card className="border-brand bg-brand-light">
           <div className="text-xs font-semibold text-brand-dark">
-            BUGÜNKÜ DERS
+            GÜNÜN OTURUMU
+          </div>
+          <div className="mb-1 text-[11px] text-slate-500">
+            🔁 tekrar → 💡 konu → 👂 dinleme → ✍️ pratik → 🎤 konuşma
           </div>
           {todayLesson ? (
             <>

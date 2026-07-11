@@ -15,9 +15,11 @@ type Msg = { role: "assistant" | "user"; content: string };
 export function ConversationPractice({
   scenario,
   starter,
+  topic,
 }: {
   scenario?: string;
   starter?: string;
+  topic?: string;
 }) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [started, setStarted] = useState(false);
@@ -63,7 +65,7 @@ export function ConversationPractice({
       const res = await fetch("/api/ai/converse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, scenario }),
+        body: JSON.stringify({ messages: history, scenario, topic }),
       });
       const json = await res.json();
       const reply: string = json.reply || "Let's talk! How are you?";

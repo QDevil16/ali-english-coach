@@ -24,9 +24,12 @@ export async function POST(req: Request) {
 
   const turnIndex = messages.filter((m: any) => m.role === "assistant").length;
   const scenario = getScenario(body?.scenario || "");
+  const topicInstruction = body?.topic
+    ? `Talk simply about: ${body.topic}. Review what the learner just studied in today's lesson.`
+    : undefined;
 
   const { text, mode } = await generateText({
-    system: conversationSystem(level, scenario?.instruction),
+    system: conversationSystem(level, scenario?.instruction || topicInstruction),
     messages: messages.slice(-10),
     mock: () => mockConversationReply(turnIndex),
     temperature: 0.8,

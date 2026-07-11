@@ -75,6 +75,9 @@ export async function POST(req: Request) {
     system: TEACHER_SYSTEM,
     user: lessonPrompt({
       profile,
+      method: profile?.ai_summary || null,
+      struggle: profile?.struggle_description || null,
+      learning_style: profile?.learning_style || null,
       curriculum: curriculum?.plan,
       mistakes,
       previousLessons: (past ?? []).map((p) => p.title),

@@ -7,6 +7,7 @@ import { Card, CardTitle, CardText } from "@/components/ui/Card";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Input";
 import { ListenButton } from "@/components/lesson/ListenButton";
+import { ConversationPractice } from "@/components/lesson/ConversationPractice";
 import {
   speak,
   recognizeOnce,
@@ -191,6 +192,50 @@ function Section({
 }) {
   const s = section as Record<string, any>;
   const cat = categoryFor(s.type);
+
+  // Faz başlığı — oturumun hangi bölümünde olduğunu gösterir.
+  if (s.type === "phase") {
+    const icon: Record<string, string> = {
+      review: "🔁",
+      teach: "💡",
+      listen: "👂",
+      practice: "✍️",
+      speak: "🎤",
+    };
+    return (
+      <div className="rounded-2xl border-2 border-brand bg-brand-light p-6 text-center">
+        <div className="text-3xl">{icon[s.phase] ?? "▶️"}</div>
+        <div className="mt-2 text-lg font-bold text-brand-dark">{s.title}</div>
+        {s.minutes && (
+          <div className="mt-1 text-sm text-slate-600">⏱ ~{s.minutes} dakika</div>
+        )}
+        <div className="mt-2 text-xs text-slate-500">
+          Hazır olunca “Sonraki Adım” de.
+        </div>
+      </div>
+    );
+  }
+
+  // Konuşma bölümü — öğrendiklerinle sesli sohbet (hatalar tekrara işlenir).
+  if (s.type === "conversation") {
+    return (
+      <Card>
+        {s.title && (
+          <div className="mb-2 text-xs font-semibold text-brand">
+            {String(s.title).toUpperCase()}
+          </div>
+        )}
+        <CardText>
+          Öğrendiklerinle kısa bir konuşma yap. Bitirince “Bitir ve
+          Değerlendir” de — hataların tekrar sistemine işlensin. Sonra dersi
+          bitir.
+        </CardText>
+        <div className="mt-3">
+          <ConversationPractice starter={s.starter} topic={s.topic} />
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card>

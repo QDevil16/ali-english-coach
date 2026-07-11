@@ -126,46 +126,57 @@ export function mockCurriculum(level: string, weeks: number): CurriculumPlan {
     title: `${level} seviyesi için kişisel plan`,
     level,
     durationWeeks: weeks,
+    method:
+      "Sana özel yaklaşım: az gramer, bol tekrar ve dinleme; kısa adımlar; her oturumun sonunda öğrendiklerinle kısa konuşma. Türkçe destekli ilerleriz. (AI kapalı — açınca kişiselleşir.)",
     weeks: w,
   };
 }
 
 export function mockLesson(level: string): LessonContent {
   return {
-    title: "Where do you ...? — nerede soruları",
+    title: "Günün Oturumu — Where do you ...?",
     level,
-    estimatedMinutes: 35,
-    focus: ["listening", "speaking", "basic questions"],
+    estimatedMinutes: 30,
+    focus: ["grammar", "listening", "speaking"],
     sections: [
+      { type: "phase", phase: "review", title: "Isınma / dünün tekrarı", minutes: 5 },
       {
         type: "warmup",
         title: "Bugünkü hedef",
         content:
-          "Bugün 'Where do you ...?' kalıbıyla basit 'nerede' sorularını anlamayı, tekrar etmeyi ve kurmayı çalışacağız. Acele yok — her cümleyi birkaç kez dinle.",
+          "Bugün 'Where do you ...?' kalıbıyla 'nerede' sorularını öğrenip, dinleyip, konuşacağız. Oturum 5 kısa bölümden oluşur; acele yok.",
       },
+      { type: "phase", phase: "teach", title: "Yeni konu", minutes: 10 },
       {
         type: "teach",
         title: "Mantığı öğren",
         content:
-          "Türkçede 'Nerede yaşıyorsun?' dersin. İngilizcede soru kurarken bir yardımcı fiil eklenir: 'do'. Yani kelime kelime değil, kalıpla düşün:\n\nWhere (nerede) + do (yardımcı fiil) + you (sen) + live (yaşamak)?\n= Where do you live?\n\n'do' kelimesinin Türkçe karşılığı yoktur; sadece 'bu bir soru' demenin İngilizce yoludur. Onu atlarsan cümle bozulur.",
+          "Türkçede 'Nerede yaşıyorsun?' dersin. İngilizcede soru kurarken yardımcı fiil 'do' eklenir:\nWhere + do + you + live? = Where do you live?\n'do'nun Türkçe karşılığı yoktur; 'bu bir soru' demenin yoludur.",
       },
       {
         type: "vocab",
-        title: "Yeni kelimeler",
+        title: "Kelimeler",
         words: [
           { word: "live", tr: "yaşamak" },
           { word: "work", tr: "çalışmak" },
-          { word: "study", tr: "okumak / çalışmak" },
+          { word: "study", tr: "okumak" },
           { word: "city", tr: "şehir" },
-          { word: "every day", tr: "her gün" },
         ],
       },
       {
         type: "teach",
-        title: "Dikkat: sık yapılan hata",
+        title: "Dikkat: sık hata",
         content:
-          "'Where you live?' DEME — 'do' eksik, yanlış. Doğrusu: 'Where DO you live?'\n\nKural: Where/What/How gibi soru kelimesinden sonra 'do' veya 'does' gelir. 'he/she/it' için 'does', diğerleri için 'do'.",
+          "'Where you live?' DEME — 'do' eksik. Doğrusu: 'Where DO you live?'. Soru kelimesinden sonra do/does gelir.",
       },
+      {
+        type: "pattern",
+        title: "Kalıp",
+        pattern: "Where do you ___?",
+        explanationTr: "Boşluğa fiil gelir: live, work, study, eat...",
+        examples: ["Where do you live?", "Where do you work?", "Where do you study?"],
+      },
+      { type: "phase", phase: "listen", title: "Dinleme", minutes: 7 },
       {
         type: "listening",
         title: "Dinleme 1",
@@ -180,57 +191,8 @@ export function mockLesson(level: string): LessonContent {
           },
         ],
       },
-      {
-        type: "repeat",
-        title: "Dinle ve tekrarla",
-        sentence: "Where do you live?",
-      },
-      {
-        type: "listening",
-        title: "Dinleme 2",
-        sentence: "Where do you work?",
-        slowText: "Where ... do ... you ... work?",
-        questions: [
-          {
-            type: "multiple_choice",
-            question: "Bu cümle ne anlama geliyor?",
-            options: ["Nerede çalışıyorsun?", "Ne zaman çalışırsın?", "Kiminle çalışırsın?"],
-            answer: "Nerede çalışıyorsun?",
-          },
-        ],
-      },
-      {
-        type: "repeat",
-        title: "Dinle ve tekrarla",
-        sentence: "Where do you work?",
-      },
-      {
-        type: "listening",
-        title: "Dinleme 3",
-        sentence: "I live in a small city.",
-        slowText: "I ... live ... in ... a ... small ... city.",
-        questions: [
-          {
-            type: "multiple_choice",
-            question: "Bu cümle ne anlama geliyor?",
-            options: ["Küçük bir şehirde yaşıyorum.", "Büyük bir evim var.", "Şehre gidiyorum."],
-            answer: "Küçük bir şehirde yaşıyorum.",
-          },
-        ],
-      },
-      {
-        type: "pattern",
-        title: "Kalıp",
-        pattern: "Where do you ___?",
-        explanationTr:
-          "Birine bir şeyi NEREDE yaptığını sormak için kullanılır. Boşluğa fiil gelir: live, work, study, eat...",
-        examples: [
-          "Where do you live?",
-          "Where do you work?",
-          "Where do you study?",
-          "Where do you eat lunch?",
-        ],
-      },
+      { type: "repeat", title: "Dinle ve tekrarla", sentence: "Where do you work?" },
+      { type: "phase", phase: "practice", title: "Pratik", minutes: 5 },
       {
         type: "comprehension",
         title: "Anlama",
@@ -241,12 +203,6 @@ export function mockLesson(level: string): LessonContent {
             options: ["I study at university.", "I am fine, thanks.", "Yes, I do."],
             answer: "I study at university.",
           },
-          {
-            type: "multiple_choice",
-            question: "'I work in Istanbul.' ne demek?",
-            options: ["İstanbul'da çalışıyorum.", "İstanbul'a gidiyorum.", "İstanbul'u seviyorum."],
-            answer: "İstanbul'da çalışıyorum.",
-          },
         ],
       },
       {
@@ -254,28 +210,12 @@ export function mockLesson(level: string): LessonContent {
         title: "Cümle kur",
         prompt: "Bu kalıpla kendi cümleni yaz: Where do you ...?",
       },
+      { type: "phase", phase: "speak", title: "Öğrendiklerinle konuş", minutes: 6 },
       {
-        type: "repeat",
-        title: "Söyle",
-        sentence: "I live in Turkey.",
-      },
-      {
-        type: "dialogue",
-        title: "Mini diyalog",
-        content:
-          "A: Hi! Where do you live?\nB: I live in Kocaeli.\nA: Nice! Where do you work?\nB: I work in Istanbul.\nA: Great! Do you like your job?\nB: Yes, I do.",
-      },
-      {
-        type: "correction",
-        title: "Hatırlatma",
-        content:
-          "İngilizcede soru kurarken 'do' unutma: 'Where you live?' değil → 'Where DO you live?'",
-      },
-      {
-        type: "summary",
-        title: "Ders özeti",
-        content:
-          "Bugün 'Where do you ...?' kalıbını dinledik, tekrarladık, anladık ve kullandık. Yarın kısa bir tekrarla pekiştireceğiz. Aferin!",
+        type: "conversation",
+        title: "Kısa konuşma",
+        topic: "asking where people live and work",
+        starter: "Hi Ali! Where do you live? (Nerede yaşıyorsun?)",
       },
     ],
   };
