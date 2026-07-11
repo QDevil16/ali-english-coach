@@ -93,3 +93,13 @@ export interface PlacementAnalysis {
   strengths: string[];
   recommendation: string;
 }
+
+export interface AIPlacementQuestion {
+  id: string;
+  skill: string; // vocabulary/grammar/reading/listening/speaking/writing
+  type: "mc" | "listen" | "speak" | "open";
+  prompt: string;
+  options?: string[];
+  answer?: string;
+  sentence?: string; // listen/speak için
+}

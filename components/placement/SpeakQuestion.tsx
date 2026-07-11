@@ -12,10 +12,12 @@ export function SpeakQuestion({
   sentence,
   answered,
   onResult,
+  onTranscript,
 }: {
   sentence: string;
   answered: boolean;
   onResult: (correct: boolean) => void;
+  onTranscript?: (text: string) => void;
 }) {
   const [listening, setListening] = useState(false);
   const [heard, setHeard] = useState<string | null>(null);
@@ -34,6 +36,7 @@ export function SpeakQuestion({
     try {
       const t = await recognizeOnce();
       setHeard(t);
+      onTranscript?.(t);
       const correct = scoreSpeech(t, sentence).ratio >= 0.8;
       setOk(correct);
       onResult(correct);

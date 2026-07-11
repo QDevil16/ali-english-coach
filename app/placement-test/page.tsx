@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Container } from "@/components/ui/Container";
@@ -10,40 +10,90 @@ import { Card, CardTitle, CardText } from "@/components/ui/Card";
 import { SingleChoice } from "@/components/ui/Choice";
 import { ListenButton } from "@/components/lesson/ListenButton";
 import { SpeakQuestion } from "@/components/placement/SpeakQuestion";
-import { PLACEMENT_QUESTIONS } from "@/lib/placement/questions";
-import { computeResult } from "@/lib/placement/score";
-import type { CEFR } from "@/lib/types";
+import type { AIPlacementQuestion, CEFR } from "@/lib/types";
 
 const LEVELS: CEFR[] = ["A0", "A1", "A2", "B1"];
 
+type Result = {
+  overall: CEFR;
+  skills: Record<string, string>;
+  weakPoints: string[];
+  strengths: string[];
+  recommendation: string;
+};
+
 export default function PlacementTestPage() {
   const router = useRouter();
+  const [questions, setQuestions] = useState<AIPlacementQuestion[] | null>(null);
   const [i, setI] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [done, setDone] = useState(false);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [phase, setPhase] = useState<"loading" | "quiz" | "grading" | "result">(
+    "loading",
+  );
+  const [result, setResult] = useState<Result | null>(null);
   const [chosenLevel, setChosenLevel] = useState<CEFR | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const q = PLACEMENT_QUESTIONS[i];
-  const total = PLACEMENT_QUESTIONS.length;
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/ai/generate-placement", { method: "POST" });
+        const json = await res.json();
+        setQuestions(json.questions);
+        setPhase("quiz");
+      } catch {
+        setError("Test yüklenemedi.");
+      }
+    })();
+  }, []);
 
-  const result = useMemo(
-    () => (done ? computeResult(PLACEMENT_QUESTIONS, answers) : null),
-    [done, answers],
-  );
-
-  function pick(idx: number) {
-    setAnswers((a) => ({ ...a, [q.id]: idx }));
+  if (phase === "loading" || !questions) {
+    return (
+      <main className="py-8">
+        <Container>
+          <Card>
+            <CardTitle>Seviye testin hazırlanıyor…</CardTitle>
+            <CardText>Yapay zekâ sana özel sorular oluşturuyor.</CardText>
+          </Card>
+          {error && (
+            <div className="mt-3">
+              <Alert>{error}</Alert>
+            </div>
+          )}
+        </Container>
+      </main>
+    );
   }
 
-  function next() {
-    if (answers[q.id] === undefined) return;
-    if (i + 1 < total) setI(i + 1);
-    else {
-      const r = computeResult(PLACEMENT_QUESTIONS, answers);
-      setChosenLevel(r.overall);
-      setDone(true);
+  const q = questions[i];
+  const total = questions.length;
+  const answered = answers[q.id] !== undefined;
+
+  function setAns(v: string) {
+    setAnswers((a) => ({ ...a, [q.id]: v }));
+  }
+
+  async function next() {
+    if (i + 1 < total) {
+      setI(i + 1);
+      return;
+    }
+    setPhase("grading");
+    try {
+      const res = await fetch("/api/ai/evaluate-placement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questions, answers }),
+      });
+      const json = await res.json();
+      const r = json.result as Result;
+      setResult(r);
+      setChosenLevel((r.overall as CEFR) || "A1");
+      setPhase("result");
+    } catch {
+      setError("Değerlendirilemedi.");
+      setPhase("quiz");
     }
   }
 
@@ -59,66 +109,62 @@ export default function PlacementTestPage() {
       router.push("/login");
       return;
     }
-
-    const { error: e1 } = await supabase.from("placement_tests").insert({
+    await supabase.from("placement_tests").insert({
       user_id: user.id,
       answers,
-      raw_score: result.rawScore,
       result,
       confirmed_level: chosenLevel,
     });
-
+    const levels = {
+      cefr_level: chosenLevel,
+      listening_level: result.skills?.listening ?? chosenLevel,
+      speaking_level: result.skills?.speaking ?? chosenLevel,
+      grammar_level: result.skills?.grammar ?? chosenLevel,
+      vocabulary_level: result.skills?.vocabulary ?? chosenLevel,
+      reading_level: result.skills?.reading ?? chosenLevel,
+      ai_summary: result.recommendation ?? null,
+    };
     const { data: lp } = await supabase
       .from("learner_profiles")
       .select("id")
       .eq("user_id", user.id)
       .maybeSingle();
-
-    const levels = {
-      cefr_level: chosenLevel,
-      listening_level: result.skills.listening ?? chosenLevel,
-      speaking_level: result.skills.speaking ?? chosenLevel,
-      grammar_level: result.skills.grammar ?? chosenLevel,
-      vocabulary_level: result.skills.vocabulary ?? chosenLevel,
-      reading_level: result.skills.reading ?? chosenLevel,
-    };
-
-    const e2 = lp
-      ? (await supabase.from("learner_profiles").update(levels).eq("id", lp.id))
-          .error
-      : (
-          await supabase
-            .from("learner_profiles")
-            .insert({ user_id: user.id, ...levels })
-        ).error;
-
+    if (lp)
+      await supabase.from("learner_profiles").update(levels).eq("id", lp.id);
+    else
+      await supabase
+        .from("learner_profiles")
+        .insert({ user_id: user.id, ...levels });
     setSaving(false);
-    if (e1 || e2) {
-      setError("Kaydedilemedi. Tekrar dene.");
-      return;
-    }
     router.push("/dashboard");
   }
 
-  if (done && result) {
+  if (phase === "grading") {
     return (
       <main className="py-8">
         <Container>
-          <h1 className="mb-1 text-2xl font-bold text-slate-900">
-            Seviye Sonucun
-          </h1>
-          <p className="mb-6 text-sm text-slate-600">
-            Sistem seviyeni{" "}
-            <strong className="text-brand">{result.overall}</strong> olarak
-            ölçtü. Bu seviyeden başlamak ister misin? İstersen değiştir.
-          </p>
+          <Card>
+            <CardTitle>Cevapların değerlendiriliyor…</CardTitle>
+            <CardText>Yapay zekâ seviyeni belirliyor.</CardText>
+          </Card>
+        </Container>
+      </main>
+    );
+  }
 
+  if (phase === "result" && result) {
+    return (
+      <main className="py-8">
+        <Container>
+          <h1 className="mb-1 text-2xl font-bold text-slate-900">Seviye Sonucun</h1>
+          <p className="mb-6 text-sm text-slate-600">
+            Yapay zekâ seviyeni{" "}
+            <strong className="text-brand">{result.overall}</strong> olarak
+            belirledi. Onayla veya değiştir.
+          </p>
           <Card className="mb-4">
-            <CardText>
-              Doğru: {result.rawScore}/{result.total}
-            </CardText>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-              {Object.entries(result.skills).map(([k, v]) => (
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              {Object.entries(result.skills || {}).map(([k, v]) => (
                 <div key={k} className="flex justify-between">
                   <span className="capitalize text-slate-500">{k}</span>
                   <span className="font-semibold text-slate-800">{v}</span>
@@ -126,29 +172,25 @@ export default function PlacementTestPage() {
               ))}
             </div>
           </Card>
-
-          {result.weakPoints.length > 0 && (
+          {result.weakPoints?.length > 0 && (
             <Card className="mb-4">
               <CardTitle>Zayıf alanlar</CardTitle>
               <CardText>{result.weakPoints.join(", ")}</CardText>
             </Card>
           )}
-
           <Card className="mb-4">
-            <CardTitle>Önerilen başlangıç</CardTitle>
-            <CardText>{result.recommendedStart}</CardText>
+            <CardTitle>Öneri</CardTitle>
+            <CardText>{result.recommendation}</CardText>
           </Card>
-
           <div className="mb-6">
             <SingleChoice
-              label="Başlangıç seviyeni onayla veya değiştir"
+              label="Başlangıç seviyeni onayla / değiştir"
               options={LEVELS.map((l) => ({ value: l, label: l }))}
               value={chosenLevel}
               onChange={setChosenLevel}
               columns={4}
             />
           </div>
-
           {error && (
             <div className="mb-4">
               <Alert>{error}</Alert>
@@ -162,11 +204,12 @@ export default function PlacementTestPage() {
     );
   }
 
+  // quiz
   return (
     <main className="py-8">
       <Container>
         <div className="mb-4 flex items-center justify-between text-sm text-slate-500">
-          <span>Seviye Testi</span>
+          <span>Seviye Testi (AI)</span>
           <span>
             {i + 1} / {total}
           </span>
@@ -180,50 +223,62 @@ export default function PlacementTestPage() {
 
         <Card className="mb-6">
           <p className="text-lg font-semibold text-slate-900">{q.prompt}</p>
-          {q.helpTr && (
-            <p className="mt-1 text-sm text-slate-500">{q.helpTr}</p>
-          )}
-
-          {q.audio && q.sentence && (
+          {q.type === "listen" && q.sentence && (
             <div className="mt-3">
               <ListenButton text={q.sentence} slowText={q.sentence} />
             </div>
           )}
         </Card>
 
-        {q.speak && q.sentence ? (
+        {q.type === "speak" && q.sentence ? (
           <SpeakQuestion
             sentence={q.sentence}
-            answered={answers[q.id] !== undefined}
-            onResult={(correct) =>
-              setAnswers((a) => ({ ...a, [q.id]: correct ? 1 : 0 }))
-            }
+            answered={answered}
+            onResult={() => {}}
+            onTranscript={(t) => setAns(t)}
+          />
+        ) : q.type === "open" ? (
+          <textarea
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-light"
+            rows={3}
+            value={answers[q.id] ?? ""}
+            onChange={(e) => setAns(e.target.value)}
+            placeholder="Cevabını İngilizce yaz..."
           />
         ) : (
-          <SingleChoice
-            label=""
-            options={q.options.map((o, idx) => ({ value: idx, label: o }))}
-            value={answers[q.id] ?? null}
-            onChange={pick}
-            columns={1}
-          />
+          <div className="space-y-2">
+            {(q.options ?? []).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setAns(opt)}
+                className={
+                  "w-full rounded-xl border px-4 py-3 text-left text-sm " +
+                  (answers[q.id] === opt
+                    ? "border-brand bg-brand-light text-brand-dark"
+                    : "border-slate-300 hover:border-brand")
+                }
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
         )}
 
         <Button
           onClick={next}
-          disabled={answers[q.id] === undefined}
+          disabled={!answered && q.type !== "speak" && q.type !== "open"}
           className="mt-6 w-full"
         >
-          {q.speak && answers[q.id] === undefined
-            ? "Önce konuş (veya geç)"
-            : i + 1 < total
-              ? "Sonraki"
-              : "Testi Bitir"}
+          {i + 1 < total ? "Sonraki" : "Testi Bitir"}
         </Button>
-        {q.speak && (
+        {(q.type === "speak" || q.type === "open") && (
           <button
             type="button"
-            onClick={() => setAnswers((a) => ({ ...a, [q.id]: 0 }))}
+            onClick={() => {
+              if (!answered) setAns("");
+              next();
+            }}
             className="mt-2 w-full py-2 text-sm text-slate-400"
           >
             Bu soruyu geç

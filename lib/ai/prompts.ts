@@ -22,6 +22,33 @@ ${scenario ? `ROL: ${scenario}\n` : ""}Kurallar:
 - Sadece konuşma partneri gibi yaz; liste, başlık, uzun açıklama yok.`;
 }
 
+export function generatePlacementPrompt(): string {
+  return `Bir Türk kullanıcı için İngilizce SEVİYE TESTİ soruları hazırla.
+14 soru üret, kolaydan (A0) zora (B1) doğru. Becerileri karıştır ve şu tipleri kullan:
+- mc: yazılı çoktan seçmeli (kelime, gramer, okuma) — options + doğru answer
+- listen: dinleme (sentence sesli okunacak, metni gizli) — anlam sorusu, options + answer
+- speak: kullanıcı verilen cümleyi söyleyecek (sentence)
+- open: serbest yazılı cevap (ör: "Kendini 2 cümleyle tanıt" veya kısa diyalog sorusu)
+En az 4 mc, 3 listen, 2 speak, 2 open olsun. Prompt'lar Türkçe, içerik İngilizce.
+Sadece geçerli JSON:
+{"questions":[
+ {"id":"q1","skill":"vocabulary","type":"mc","prompt":"'water' ne demek?","options":["su","ateş","ekmek"],"answer":"su"},
+ {"id":"q2","skill":"listening","type":"listen","sentence":"Where do you work?","prompt":"Dinle: ne anlama geliyor?","options":["Nerede çalışırsın?","Ne iş yaparsın?","Nereye gidersin?"],"answer":"Nerede çalışırsın?"},
+ {"id":"q3","skill":"speaking","type":"speak","sentence":"I live in Istanbul.","prompt":"Bu cümleyi söyle"},
+ {"id":"q4","skill":"writing","type":"open","prompt":"Kendini İngilizce 2 cümleyle tanıt."}
+]}`;
+}
+
+export function evaluatePlacementPrompt(transcript: string): string {
+  return `Aşağıda bir İngilizce seviye testinin soruları ve kullanıcının cevapları var.
+${transcript}
+
+Cevaplara bakarak kullanıcının CEFR seviyesini belirle. SIKI ol: kolay soruları bilmek B1 yapmaz.
+open (serbest yazı) ve speak (söylenen) cevaplarını dilbilgisi/akıcılık açısından değerlendir.
+Sadece geçerli JSON:
+{"overall":"A1","skills":{"listening":"A1","speaking":"A0","grammar":"A1","vocabulary":"A2","reading":"A1"},"weakPoints":["Dinleme","Konuşma"],"strengths":["Kelime"],"recommendation":"kısa Türkçe öneri"}`;
+}
+
 export function reviewConversationPrompt(transcript: string, level: string): string {
   return `Aşağıda Ali (seviye ${level}) ile İngilizce konuşma dökümü var.
 Sadece ALI'nin (user) cümlelerindeki hataları bul.

@@ -1,9 +1,92 @@
 import type {
+  AIPlacementQuestion,
   CurriculumPlan,
   EvaluationResult,
   LessonContent,
   PlacementAnalysis,
 } from "@/lib/types";
+import { PLACEMENT_QUESTIONS } from "@/lib/placement/questions";
+
+const CATEGORY_TR: Record<string, string> = {
+  vocabulary: "Kelime",
+  grammar: "Gramer",
+  reading: "Okuma",
+  listening: "Dinleme",
+  speaking: "Konuşma",
+  sentence: "Cümle kurma",
+};
+
+// AI kapalıyken: statik bankayı AI soru formatına çevir.
+export function mockPlacementQuestions(): AIPlacementQuestion[] {
+  return PLACEMENT_QUESTIONS.map((q) => {
+    if (q.speak)
+      return {
+        id: q.id,
+        skill: "speaking",
+        type: "speak" as const,
+        prompt: q.prompt,
+        sentence: q.sentence,
+      };
+    const type = q.audio ? ("listen" as const) : ("mc" as const);
+    return {
+      id: q.id,
+      skill: q.category,
+      type,
+      prompt: q.prompt,
+      options: q.options,
+      answer: q.options[q.answerIndex],
+      sentence: q.sentence,
+    };
+  });
+}
+
+function levelFromPct(pct: number): string {
+  if (pct < 0.4) return "A0";
+  if (pct < 0.65) return "A1";
+  if (pct < 0.85) return "A2";
+  return "B1";
+}
+
+// AI kapalıyken: çoktan seçmeli/dinleme doğruluğundan seviye tahmini.
+export function mockPlacementEvaluation(
+  questions: AIPlacementQuestion[],
+  answers: Record<string, string>,
+) {
+  let correct = 0;
+  let total = 0;
+  const perSkill: Record<string, { c: number; t: number }> = {};
+  for (const q of questions) {
+    if ((q.type === "mc" || q.type === "listen") && q.answer) {
+      total += 1;
+      perSkill[q.skill] ??= { c: 0, t: 0 };
+      perSkill[q.skill].t += 1;
+      if ((answers[q.id] || "").trim() === q.answer.trim()) {
+        correct += 1;
+        perSkill[q.skill].c += 1;
+      }
+    }
+  }
+  const overall = levelFromPct(total ? correct / total : 0);
+  const skills: Record<string, string> = {};
+  const scored: Array<{ s: string; pct: number }> = [];
+  for (const [s, v] of Object.entries(perSkill)) {
+    const pct = v.t ? v.c / v.t : 0;
+    skills[s] = levelFromPct(pct);
+    scored.push({ s, pct });
+  }
+  scored.sort((a, b) => a.pct - b.pct);
+  return {
+    overall,
+    skills,
+    weakPoints: scored.slice(0, 2).map((x) => CATEGORY_TR[x.s] ?? x.s),
+    strengths: scored
+      .slice(-1)
+      .filter((x) => x.pct >= 0.5)
+      .map((x) => CATEGORY_TR[x.s] ?? x.s),
+    recommendation:
+      "Her gün kısa dinleme ve tekrar ile başla. (AI kapalı — bu tahmin çoktan seçmeli cevaplara dayanır.)",
+  };
+}
 
 export function mockPlacementAnalysis(level: string): PlacementAnalysis {
   return {
