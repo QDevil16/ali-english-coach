@@ -12,7 +12,13 @@ import {
 
 type Msg = { role: "assistant" | "user"; content: string };
 
-export function ConversationPractice() {
+export function ConversationPractice({
+  scenario,
+  starter,
+}: {
+  scenario?: string;
+  starter?: string;
+}) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [started, setStarted] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -26,7 +32,7 @@ export function ConversationPractice() {
       const res = await fetch("/api/ai/converse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, scenario }),
       });
       const json = await res.json();
       const reply: string = json.reply || "Let's talk! How are you?";
@@ -41,7 +47,13 @@ export function ConversationPractice() {
 
   function start() {
     setStarted(true);
-    ask([]);
+    if (starter) {
+      // Senaryo açılış cümlesini hemen göster ve seslendir.
+      setMessages([{ role: "assistant", content: starter }]);
+      speak(starter.replace(/\(.*?\)/g, ""), 0.95);
+    } else {
+      ask([]);
+    }
   }
 
   async function sendUser(text: string) {

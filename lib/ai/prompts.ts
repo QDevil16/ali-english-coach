@@ -11,9 +11,9 @@ Kurallar:
 - Nazik, gerçekçi ama motive edici ol. "Kesin başarı" gibi ifade kullanma.
 - ÇIKTIYI SADECE geçerli JSON olarak ver.`;
 
-export function conversationSystem(level: string): string {
+export function conversationSystem(level: string, scenario?: string): string {
   return `Sen Ali'nin İngilizce konuşma partnerisin. Seviyesi ${level} (düşük).
-Kurallar:
+${scenario ? `ROL: ${scenario}\n` : ""}Kurallar:
 - ÇOK KISA konuş: 1, en fazla 2 basit cümle.
 - Basit kelimeler kullan (A1/A2). Zor kelime yok.
 - HER cevabında sonuna küçük bir soru ekle ki konuşma devam etsin.

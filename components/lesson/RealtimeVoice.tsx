@@ -7,7 +7,7 @@ import { Alert } from "@/components/ui/Input";
 
 type State = "idle" | "connecting" | "live" | "error";
 
-export function RealtimeVoice() {
+export function RealtimeVoice({ scenario }: { scenario?: string }) {
   const [state, setState] = useState<State>("idle");
   const [err, setErr] = useState<string | null>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
@@ -18,7 +18,11 @@ export function RealtimeVoice() {
     setErr(null);
     setState("connecting");
     try {
-      const sres = await fetch("/api/realtime/session", { method: "POST" });
+      const sres = await fetch("/api/realtime/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scenario }),
+      });
       const sjson = await sres.json();
       if (sjson.mode === "disabled") {
         setErr(sjson.note || "Canlı ses kapalı.");

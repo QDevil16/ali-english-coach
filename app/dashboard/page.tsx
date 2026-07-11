@@ -166,19 +166,27 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {/* Konuşma pratiği */}
-        <Card>
-          <CardTitle>🎤 Konuşma Pratiği</CardTitle>
-          <CardText>
-            AI ile sesli, kısa İngilizce sohbet. O konuşur, sen cevap verirsin.
-          </CardText>
+        {/* Dinleme + Konuşma */}
+        <div className="grid grid-cols-2 gap-2">
+          <Link
+            href="/listen"
+            className="rounded-2xl border border-slate-200 bg-white p-4"
+          >
+            <div className="text-sm font-bold text-slate-900">👂 Dinleme</div>
+            <div className="mt-1 text-xs text-slate-500">
+              duyduğunu yaz (dikte) — anlama gelişir
+            </div>
+          </Link>
           <Link
             href="/lesson/practice"
-            className="mt-2 inline-block text-sm font-semibold text-brand"
+            className="rounded-2xl border border-slate-200 bg-white p-4"
           >
-            Konuşmaya başla →
+            <div className="text-sm font-bold text-slate-900">🎤 Konuşma</div>
+            <div className="mt-1 text-xs text-slate-500">
+              senaryolu sohbet: restoran, otel, yön...
+            </div>
           </Link>
-        </Card>
+        </div>
 
         {/* Özet istatistikler */}
         <div className="grid grid-cols-3 gap-2">

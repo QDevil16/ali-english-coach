@@ -26,6 +26,12 @@ export default async function VocabularyPage() {
 
   return (
     <AppShell title="Kelimelerim">
+      <Link
+        href="/vocabulary/packs"
+        className="mb-4 block rounded-xl border border-brand bg-brand-light px-4 py-3 text-center text-sm font-semibold text-brand-dark"
+      >
+        ＋ Temalı kelime paketleri (seyahat, iş, restoran...)
+      </Link>
       {list.length === 0 ? (
         <Card>
           <CardText>
