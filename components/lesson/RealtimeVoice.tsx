@@ -34,9 +34,9 @@ export function RealtimeVoice({ scenario }: { scenario?: string }) {
         setState("error");
         return;
       }
-      const key = sjson.session?.client_secret?.value;
-      const model = sjson.model;
-      if (!key) {
+      const key = sjson.ephemeralKey;
+      const connectUrl = sjson.connectUrl;
+      if (!key || !connectUrl) {
         setErr("Oturum anahtarı alınamadı.");
         setState("error");
         return;
@@ -62,20 +62,19 @@ export function RealtimeVoice({ scenario }: { scenario?: string }) {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
-      const resp = await fetch(
-        `https://api.openai.com/v1/realtime?model=${encodeURIComponent(model)}`,
-        {
-          method: "POST",
-          body: offer.sdp,
-          headers: {
-            Authorization: `Bearer ${key}`,
-            "Content-Type": "application/sdp",
-          },
+      const resp = await fetch(connectUrl, {
+        method: "POST",
+        body: offer.sdp,
+        headers: {
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/sdp",
         },
-      );
+      });
       if (!resp.ok) {
+        const t = await resp.text().catch(() => "");
         setErr(
-          "OpenAI realtime bağlantısı reddetti (model geçersiz veya kredi yetersiz olabilir).",
+          "OpenAI realtime bağlantısı reddetti (model/kredi olabilir). " +
+            (t ? t.slice(0, 120) : `HTTP ${resp.status}`),
         );
         setState("error");
         return;
