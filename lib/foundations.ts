@@ -207,6 +207,214 @@ export const FOUNDATIONS: Foundation[] = [
   },
 ];
 
+// Sıfırdan başlangıç dersleri (hiç bilmeyen biri için) — Modül 0.
+FOUNDATIONS.push(
+  {
+    slug: "greetings",
+    title: "Selamlaşma",
+    level: "A0",
+    summary: "Merhaba demek, hâl hatır sormak, vedalaşmak.",
+    content: {
+      title: "Selamlaşma — Hello!",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["listening", "speaking"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "İlk adım: İngilizce selam vermeyi ve hâl hatır sormayı öğreniyoruz. En çok kullanacağın kelimeler bunlar." },
+        { type: "teach", title: "Temel selamlar", content: "• Hello / Hi = Merhaba\n• Good morning = Günaydın\n• Good afternoon = İyi günler (öğleden sonra)\n• Good evening = İyi akşamlar\n• Goodbye / Bye = Hoşça kal\n\nGün içinde en çok 'Hi' ve 'Hello' kullanılır." },
+        { type: "teach", title: "Hâl hatır sorma", content: "• How are you? = Nasılsın?\n• I'm fine, thanks. = İyiyim, teşekkürler.\n• And you? = Ya sen?\n\nKlasik diyalog:\nA: Hi! How are you?\nB: I'm fine, thanks. And you?\nA: I'm good." },
+        { type: "repeat", title: "Tekrarla", sentence: "Hello, how are you?" },
+        { type: "repeat", title: "Tekrarla", sentence: "I'm fine, thank you." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'How are you?' ne demek?", options: ["Nasılsın?", "Adın ne?", "Nerelisin?"], answer: "Nasılsın?" },
+          { type: "multiple_choice", question: "'Good morning' ne zaman denir?", options: ["Sabah", "Akşam", "Gece"], answer: "Sabah" },
+        ] },
+        { type: "summary", title: "Özet", content: "Hi/Hello = merhaba, How are you? = nasılsın, I'm fine = iyiyim, Bye = hoşça kal. Her gün kullan." },
+      ],
+    },
+  },
+  {
+    slug: "introduce",
+    title: "Kendini Tanıtma",
+    level: "A0",
+    summary: "İsmini, nereli olduğunu söylemek.",
+    content: {
+      title: "Kendini Tanıtma",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["speaking"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Adını ve nereli olduğunu söylemeyi öğreniyoruz." },
+        { type: "teach", title: "Kalıplar", content: "• My name is Ali. = Benim adım Ali.\n• I am Ali. = Ben Ali'yim.\n• I am from Turkey. = Türkiye'liyim.\n• Nice to meet you. = Tanıştığıma memnun oldum.\n\n'What is your name?' = Adın ne? sorusuna 'My name is ...' diye cevap verirsin." },
+        { type: "repeat", title: "Tekrarla", sentence: "My name is Ali." },
+        { type: "repeat", title: "Tekrarla", sentence: "I am from Turkey." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'What is your name?' ne demek?", options: ["Adın ne?", "Nerelisin?", "Nasılsın?"], answer: "Adın ne?" },
+          { type: "multiple_choice", question: "'I am from Turkey.' ne demek?", options: ["Türkiye'liyim.", "Türkiye'ye gidiyorum.", "Türkiye'yi seviyorum."], answer: "Türkiye'liyim." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Kendini tanıt: 'My name is ...' ve 'I am from ...'" },
+        { type: "summary", title: "Özet", content: "My name is ... = adım ..., I am from ... = ...'liyim, Nice to meet you = memnun oldum." },
+      ],
+    },
+  },
+  {
+    slug: "numbers",
+    title: "Sayılar (1–20)",
+    level: "A0",
+    summary: "Saymak ve yaşını söylemek.",
+    content: {
+      title: "Sayılar 1–20",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["vocabulary", "listening"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "1'den 20'ye kadar saymayı ve yaşını söylemeyi öğreniyoruz." },
+        { type: "vocab", title: "1–10", words: [
+          { word: "one", tr: "bir" }, { word: "two", tr: "iki" }, { word: "three", tr: "üç" }, { word: "four", tr: "dört" }, { word: "five", tr: "beş" },
+          { word: "six", tr: "altı" }, { word: "seven", tr: "yedi" }, { word: "eight", tr: "sekiz" }, { word: "nine", tr: "dokuz" }, { word: "ten", tr: "on" },
+        ] },
+        { type: "teach", title: "11–20", content: "eleven (11), twelve (12), thirteen (13), fourteen (14), fifteen (15), sixteen (16), seventeen (17), eighteen (18), nineteen (19), twenty (20).\n\n13-19 arası genelde '-teen' ile biter." },
+        { type: "teach", title: "Yaş", content: "• How old are you? = Kaç yaşındasın?\n• I am twenty years old. = Yirmi yaşındayım." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'seven' kaç?", options: ["6", "7", "8"], answer: "7" },
+          { type: "multiple_choice", question: "'How old are you?' ne demek?", options: ["Kaç yaşındasın?", "Nasılsın?", "Nerelisin?"], answer: "Kaç yaşındasın?" },
+        ] },
+        { type: "summary", title: "Özet", content: "1–20'yi öğrendik. How old are you? = kaç yaşındasın, I am ... years old = ... yaşındayım." },
+      ],
+    },
+  },
+  {
+    slug: "colors-things",
+    title: "Renkler ve Nesneler",
+    level: "A0",
+    summary: "'This is a ...' ile nesneleri adlandırmak.",
+    content: {
+      title: "Renkler ve Nesneler",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["vocabulary"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Renkleri ve günlük nesneleri, 'This is a ...' kalıbıyla öğreniyoruz." },
+        { type: "vocab", title: "Renkler", words: [
+          { word: "red", tr: "kırmızı" }, { word: "blue", tr: "mavi" }, { word: "green", tr: "yeşil" }, { word: "yellow", tr: "sarı" }, { word: "black", tr: "siyah" }, { word: "white", tr: "beyaz" },
+        ] },
+        { type: "vocab", title: "Nesneler", words: [
+          { word: "book", tr: "kitap" }, { word: "table", tr: "masa" }, { word: "pen", tr: "kalem" }, { word: "door", tr: "kapı" }, { word: "car", tr: "araba" },
+        ] },
+        { type: "teach", title: "Kalıp", content: "• This is a book. = Bu bir kitap.\n• It is red. = O kırmızı.\n• This is a red car. = Bu kırmızı bir araba.\n\nRenk, ismin ÖNÜNE gelir: a red car (kırmızı araba)." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'blue' ne demek?", options: ["mavi", "yeşil", "sarı"], answer: "mavi" },
+          { type: "multiple_choice", question: "'This is a book.' ne demek?", options: ["Bu bir kitap.", "Kitap nerede?", "Bir kitabım var."], answer: "Bu bir kitap." },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Yanındaki bir nesneyi anlat: 'This is a ...'" },
+        { type: "summary", title: "Özet", content: "Renkler + nesneler öğrendik. This is a ... = bu bir ..., renk ismin önüne gelir (a red car)." },
+      ],
+    },
+  },
+  {
+    slug: "days-months",
+    title: "Günler ve Aylar",
+    level: "A0",
+    summary: "Haftanın günleri, aylar, bugün.",
+    content: {
+      title: "Günler ve Aylar",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["vocabulary"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Haftanın günlerini ve ayları öğreniyoruz." },
+        { type: "teach", title: "Günler", content: "Monday (Pazartesi), Tuesday (Salı), Wednesday (Çarşamba), Thursday (Perşembe), Friday (Cuma), Saturday (Cumartesi), Sunday (Pazar).\n\n• Today is Monday. = Bugün Pazartesi.\n• What day is it today? = Bugün günlerden ne?" },
+        { type: "teach", title: "Aylar", content: "January, February, March, April, May, June, July, August, September, October, November, December.\n\nİngilizcede günler ve aylar her zaman BÜYÜK harfle yazılır." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'Friday' hangi gün?", options: ["Cuma", "Salı", "Pazar"], answer: "Cuma" },
+          { type: "multiple_choice", question: "Günler nasıl yazılır?", options: ["Büyük harfle", "Küçük harfle", "Fark etmez"], answer: "Büyük harfle" },
+        ] },
+        { type: "summary", title: "Özet", content: "Günler ve aylar öğrendik, hepsi büyük harfle yazılır. Today is ... = bugün ..." },
+      ],
+    },
+  },
+  {
+    slug: "have-like",
+    title: "I have / I like",
+    level: "A0",
+    summary: "Neyin olduğunu ve neyi sevdiğini söylemek.",
+    content: {
+      title: "I have / I like",
+      level: "A0",
+      estimatedMinutes: 15,
+      focus: ["grammar", "speaking"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Neyin olduğunu (have) ve neyi sevdiğini (like) söylemeyi öğreniyoruz." },
+        { type: "teach", title: "have = sahip olmak", content: "• I have a car. = Bir arabam var.\n• I have a brother. = Bir erkek kardeşim var.\n\nhe/she için 'has':\n• She has a cat. = Bir kedisi var." },
+        { type: "teach", title: "like = sevmek", content: "• I like coffee. = Kahve severim.\n• I don't like tea. = Çay sevmem.\n• Do you like music? = Müzik sever misin?\n\nhe/she için 'likes': She likes tea." },
+        { type: "repeat", title: "Tekrarla", sentence: "I have a car." },
+        { type: "repeat", title: "Tekrarla", sentence: "I like coffee." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'I have a dog.' ne demek?", options: ["Bir köpeğim var.", "Köpek severim.", "Köpek istiyorum."], answer: "Bir köpeğim var." },
+          { type: "multiple_choice", question: "She ___ a cat.", options: ["have", "has", "having"], answer: "has" },
+        ] },
+        { type: "production", title: "Sen kur", prompt: "Neyi seversin? 'I like ...' ile yaz." },
+        { type: "summary", title: "Özet", content: "have = sahip olmak (he/she → has), like = sevmek (he/she → likes)." },
+      ],
+    },
+  },
+  {
+    slug: "polite",
+    title: "Kibar İfadeler",
+    level: "A0",
+    summary: "Lütfen, teşekkür, özür, izin isteme.",
+    content: {
+      title: "Kibar İfadeler",
+      level: "A0",
+      estimatedMinutes: 12,
+      focus: ["speaking"],
+      sections: [
+        { type: "warmup", title: "Hedef", content: "Günlük hayatta çok işine yarayacak kibar ifadeleri öğreniyoruz." },
+        { type: "teach", title: "Kalıplar", content: "• Please = Lütfen\n• Thank you / Thanks = Teşekkürler\n• You're welcome = Rica ederim\n• Sorry = Özür dilerim / Pardon\n• Excuse me = Affedersiniz (dikkat çekmek için)\n• Can you help me? = Bana yardım eder misin?" },
+        { type: "repeat", title: "Tekrarla", sentence: "Can you help me, please?" },
+        { type: "repeat", title: "Tekrarla", sentence: "Thank you very much." },
+        { type: "comprehension", title: "Kontrol", questions: [
+          { type: "multiple_choice", question: "'Excuse me' ne için kullanılır?", options: ["Dikkat çekmek/affedersiniz", "Teşekkür", "Veda"], answer: "Dikkat çekmek/affedersiniz" },
+          { type: "multiple_choice", question: "'You're welcome' ne demek?", options: ["Rica ederim", "Hoş geldin", "Teşekkürler"], answer: "Rica ederim" },
+        ] },
+        { type: "summary", title: "Özet", content: "Please, thank you, sorry, excuse me — kibar konuşmanın temeli. Her gün kullan." },
+      ],
+    },
+  },
+);
+
+export const MODULES: Array<{ title: string; note: string; slugs: string[] }> = [
+  {
+    title: "Modül 0 — Sıfırdan Başlangıç",
+    note: "Hiç bilmiyorsan buradan başla.",
+    slugs: [
+      "greetings",
+      "introduce",
+      "numbers",
+      "colors-things",
+      "days-months",
+      "have-like",
+      "polite",
+    ],
+  },
+  {
+    title: "Modül 1 — Temel Gramer (A1)",
+    note: "İlk gramer kuralları.",
+    slugs: ["to-be", "present-simple", "present-continuous"],
+  },
+  {
+    title: "Modül 2 — Günlük İngilizce (A2)",
+    note: "Zamanlar ve cümle kurma.",
+    slugs: [
+      "past-simple",
+      "future",
+      "questions",
+      "there-is-are",
+      "sentence-structure",
+    ],
+  },
+];
+
 export function getFoundation(slug: string): Foundation | undefined {
   return FOUNDATIONS.find((f) => f.slug === slug);
 }

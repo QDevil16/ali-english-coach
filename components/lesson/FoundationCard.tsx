@@ -10,12 +10,14 @@ export function FoundationCard({
   level,
   summary,
   index,
+  done,
 }: {
   slug: string;
   title: string;
   level: string;
   summary: string;
   index: number;
+  done?: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -41,8 +43,15 @@ export function FoundationCard({
       <Card className="transition-colors hover:border-brand">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-light text-sm font-bold text-brand-dark">
-              {index}
+            <span
+              className={
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold " +
+                (done
+                  ? "bg-green-500 text-white"
+                  : "bg-brand-light text-brand-dark")
+              }
+            >
+              {done ? "✓" : index}
             </span>
             <div>
               <CardTitle>{title}</CardTitle>
