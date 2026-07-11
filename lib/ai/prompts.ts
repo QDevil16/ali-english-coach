@@ -22,6 +22,21 @@ ${scenario ? `ROL: ${scenario}\n` : ""}Kurallar:
 - Sadece konuşma partneri gibi yaz; liste, başlık, uzun açıklama yok.`;
 }
 
+export function reviewConversationPrompt(transcript: string, level: string): string {
+  return `Aşağıda Ali (seviye ${level}) ile İngilizce konuşma dökümü var.
+Sadece ALI'nin (user) cümlelerindeki hataları bul.
+
+${transcript}
+
+Görev:
+1. Ali'nin yaptığı dilbilgisi/kelime hatalarını bul (en fazla 5). Her biri için: yanlış hali, doğru hali, kısa Türkçe açıklama, kategori.
+2. Sohbette geçen, Ali'nin öğrenmesi faydalı 3-6 kelime (İngilizce + Türkçe).
+3. Kısa (2-3 cümle) Türkçe genel geri bildirim ve bir sonraki öneri.
+category şunlardan biri: grammar, vocabulary, word_order, wrong_tense, missing_word, translation
+Sadece geçerli JSON döndür:
+{"feedbackTr":"...","corrections":[{"userAnswer":"...","correct":"...","explanationTr":"...","category":"grammar"}],"words":[{"word":"...","tr":"..."}]}`;
+}
+
 export function analyzePlacementPrompt(input: unknown): string {
   return `Kullanıcı verisi:
 ${JSON.stringify(input)}

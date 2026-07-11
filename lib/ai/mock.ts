@@ -239,6 +239,24 @@ export function mockConversationReply(turnIndex: number): string {
   return MOCK_TURNS[Math.min(turnIndex, MOCK_TURNS.length - 1)];
 }
 
+export function mockConversationReview(): {
+  feedbackTr: string;
+  corrections: Array<{
+    userAnswer: string;
+    correct: string;
+    explanationTr: string;
+    category: string;
+  }>;
+  words: Array<{ word: string; tr: string }>;
+} {
+  return {
+    feedbackTr:
+      "Güzel konuştun! (AI kapalı olduğu için otomatik hata analizi yapılamadı — gerçek düzeltmeler OpenAI anahtarı ile gelir.)",
+    corrections: [],
+    words: [],
+  };
+}
+
 export function mockFinishSummary(score: number): { feedbackTr: string } {
   return {
     feedbackTr:

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardText } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { useRef, useState } from "react";
+import { Card, CardTitle, CardText } from "@/components/ui/Card";
+import { Button, LinkButton } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Input";
 import {
   speak,
@@ -25,6 +25,37 @@ export function ConversationPractice({
   const [listening, setListening] = useState(false);
   const [typed, setTyped] = useState("");
   const [note, setNote] = useState<string | null>(null);
+  const startRef = useRef(Date.now());
+  const [reviewing, setReviewing] = useState(false);
+  const [review, setReview] = useState<{
+    feedbackTr: string;
+    savedMistakes: number;
+    savedWords: number;
+  } | null>(null);
+
+  const hasUserTurn = messages.some((m) => m.role === "user");
+
+  async function finishAndReview() {
+    setReviewing(true);
+    try {
+      const minutes = Math.round((Date.now() - startRef.current) / 60000);
+      const res = await fetch("/api/ai/review-conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages, timeSpentMinutes: minutes }),
+      });
+      const json = await res.json();
+      setReview({
+        feedbackTr: json.feedbackTr || "Sohbet kaydedildi.",
+        savedMistakes: json.savedMistakes ?? 0,
+        savedWords: json.savedWords ?? 0,
+      });
+    } catch {
+      setNote("Değerlendirme yapılamadı.");
+    } finally {
+      setReviewing(false);
+    }
+  }
 
   async function ask(history: Msg[]) {
     setBusy(true);
@@ -100,6 +131,27 @@ export function ConversationPractice({
 
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
 
+  if (review) {
+    return (
+      <Card>
+        <CardTitle>Sohbet değerlendirmen 📋</CardTitle>
+        <CardText>{review.feedbackTr}</CardText>
+        <div className="mt-3 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          🔁 Tekrar sistemine eklendi: <b>{review.savedMistakes}</b> düzeltme ·{" "}
+          <b>{review.savedWords}</b> kelime
+        </div>
+        <div className="mt-4 space-y-2">
+          <LinkButton href="/review" className="w-full">
+            Tekrar kartlarına git
+          </LinkButton>
+          <LinkButton href="/dashboard" variant="secondary" className="w-full">
+            Panele dön
+          </LinkButton>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -158,6 +210,19 @@ export function ConversationPractice({
       </div>
 
       {note && <p className="text-sm text-amber-600">{note}</p>}
+
+      {hasUserTurn && (
+        <Button
+          variant="secondary"
+          onClick={finishAndReview}
+          disabled={reviewing || busy}
+          className="w-full"
+        >
+          {reviewing
+            ? "Değerlendiriliyor..."
+            : "Bitir ve Değerlendir (hataları kaydet)"}
+        </Button>
+      )}
     </div>
   );
 }
