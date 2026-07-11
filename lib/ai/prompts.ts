@@ -1,3 +1,10 @@
+export const MC_RULES = `ÇOKTAN SEÇMELİ SORU KURALLARI (ÇOK ÖNEMLİ):
+- Her sorunun SADECE 1 doğru cevabı olmalı; diğer şıklar AÇIKÇA yanlış olsun (yanlış anlam veya dilbilgisi hatası).
+- "Hangisi doğru?" gibi birden fazla şıkkın geçerli olabileceği soru SORMA.
+- Soru tek başına anlaşılır olsun; ekranda olmayan bağlama dayanma.
+- EN İYİ tip: anlam sorusu ("Bu cümle ne demek?" → Türkçe şıklar) veya boşluk doldurma ("She ___ a teacher" → is/am/are).
+- "answer" alanı MUTLAKA "options" içinden birebir biri olsun. En az 3 şık ver.`;
+
 export const TEACHER_SYSTEM = `Sen "Ali English Coach" adında sabırlı bir İngilizce öğretmenisin.
 Kullanıcı Türk, seviyesi düşük, duyduğunu anlama zayıf, ezberi kötü, gramerden sıkılıyor.
 Kurallar:
@@ -30,6 +37,7 @@ export function generatePlacementPrompt(): string {
 - speak: kullanıcı verilen cümleyi söyleyecek (sentence)
 - open: serbest yazılı cevap (ör: "Kendini 2 cümleyle tanıt" veya kısa diyalog sorusu)
 En az 4 mc, 3 listen, 2 speak, 2 open olsun. Prompt'lar Türkçe, içerik İngilizce.
+${MC_RULES}
 Sadece geçerli JSON:
 {"questions":[
  {"id":"q1","skill":"vocabulary","type":"mc","prompt":"'water' ne demek?","options":["su","ateş","ekmek"],"answer":"su"},
@@ -108,6 +116,7 @@ FAZ 4 — practice (~5 dk): {"type":"phase","phase":"practice","title":"Pratik",
 FAZ 5 — speak (~5-8 dk): {"type":"phase","phase":"speak","title":"Öğrendiklerinle konuş","minutes":6} + {"type":"conversation","title":"Kısa konuşma","topic":"bugünkü konu (İngilizce, kısa)","starter":"AI'nın basit açılış cümlesi + (Türkçe ipucu)"}
 
 PEDAGOJİ: mantığı Türkçe anlat, Türkçe ile karşılaştır, sık hatayı önceden söyle, kademeli (model→ipuçlu→serbest), kısa cümleler.
+${MC_RULES}
 Türkçe açıkla, İngilizce örnek ver. SADECE geçerli JSON döndür.
 JSON şeması:
 {"title":"...","level":"A1","estimatedMinutes":30,"focus":["grammar","listening","speaking"],

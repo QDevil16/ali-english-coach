@@ -86,6 +86,24 @@ export async function POST(req: Request) {
     mock: () => mockLesson(level),
   });
 
+  // Bozuk çoktan seçmeli soruları ele: cevap şıklarda olmalı, şıklar benzersiz ve >=2 olmalı.
+  if (Array.isArray(content?.sections)) {
+    for (const s of content.sections as any[]) {
+      if (Array.isArray(s?.questions)) {
+        s.questions = s.questions.filter((q: any) => {
+          const opts: string[] = Array.isArray(q?.options) ? q.options : [];
+          const uniq = new Set(opts.map((o) => String(o).trim().toLowerCase()));
+          return (
+            opts.length >= 2 &&
+            uniq.size === opts.length &&
+            typeof q?.answer === "string" &&
+            opts.some((o) => String(o).trim() === String(q.answer).trim())
+          );
+        });
+      }
+    }
+  }
+
   const { data: row, error } = await supabase
     .from("lessons")
     .insert({
